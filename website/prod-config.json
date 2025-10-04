@@ -1,0 +1,17 @@
+{
+  "SECRET_KEY":"MySessionSecret",
+  "FLASK_RUN_HOST": "localhost",
+  "FLASK_RUN_PORT": 8098,
+
+  "DB_HOST": "localhost",
+  "DB_USER": "user",
+  "DB_PASSWORD": "password",
+  "DB_DATABASE": "gamehub",
+
+  "CACHE_TYPE": "SimpleCache",
+  "CACHE_KEY_PREFIX": "gamehub_",
+
+  "GUNICORN_PROCESSES": 2,
+  "GUNICORN_THREADS": 2,
+  "GUNICORN_BIND": "localhost:8098"
+}

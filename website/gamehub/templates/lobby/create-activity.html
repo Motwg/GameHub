@@ -1,0 +1,30 @@
+<dialog class="modal" id="createActivityModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createActivityModalLabel">New Activity</h5>
+            </div>
+
+            <div class="modal-body">
+                <div data-name="activity">
+                    <label for="selectActivity"><b>Activity</b></label>
+                    <select class="form-select mb-1" id="selectActivity">
+                        <option value="cah" selected>Card Against Humanity</option>
+                    </select>
+                </div>
+                <div data-name="password">
+                    <div class="form-check mb-1">
+                        <label for="password"><b>Password</b></label>
+                        <input type="password" class="form-text-input" id="password">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Submit"
+                        onclick="createActivity()">OK</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</dialog>

@@ -1,0 +1,13 @@
+{
+  "SECRET_KEY":"MySessionSecret",
+  "DEBUG": true,
+  "SERVER_NAME": "127.0.0.1:5000",
+
+  "DB_HOST": "localhost",
+  "DB_USER": "user",
+  "DB_PASSWORD": "password",
+  "DB_DATABASE": "gamehub",
+
+  "CACHE_TYPE": "SimpleCache",
+  "CACHE_KEY_PREFIX": "gamehub_"
+}

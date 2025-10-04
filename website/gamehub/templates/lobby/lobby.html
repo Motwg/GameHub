@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block metatags %}
+<meta name="description" content="Main Panel">
+{% endblock %}
+
+{% block scripts %}
+<!-- socket.io -->
+<script src="{{url_for('static', filename='external/js/socket.io.min.js')}}"></script>
+<!-- css -->
+<link href="{{ url_for('static', filename='css/cah.css') }}" type="text/css" rel="stylesheet">
+<script>
+    const loginUrl = "{{ url_for('auth.login') }}";
+    const roomUrl = "{{ url_for('bl_lobby.create_room') }}";
+</script>
+{% endblock %}
+
+{% block contents %}
+<div>
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item active" aria-current="page">Lobby</li>
+    </ol>
+</div>
+
+<div class="form-text mb-1">
+    <label for="usernameInput"><b>Username</b></label>
+    <input type="text" class="form-text-input" name="username" id="usernameInput">
+    <button class="btn btn-secondary" onclick="changeUsername();" rel="nofollow">Change Username</button>
+</div>
+
+<button class="btn btn-primary" onclick="openModalCreateActivity();" rel=”nofollow”>Create Room</button>
+
+<div class="table table-responsive" style="padding: 10px 0px; ">
+<table id="rooms" class="display compact table table-bordered">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Game</th>
+        <th scope="col">Password</th>
+        <th scope="col">Players</th>
+        <th scope="col">Join</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for room in rooms %}
+    <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ room['activity'] }}</td>
+        <td>{{ room['password'] }}</td>
+        <td>{{ ' '.join(room['members']) }}</td>
+        <td>
+            <form action="{{ url_for('bl_lobby.join_room', room_id=room['room_id']) }}">
+                {% if loop.index % 2 %}
+                <input class="btn btn-secondary" type="submit" value="Join" style="width: 50%; transform: translate(50%, 0%);"/>
+                {% else %}
+                <input class="btn btn-primary" type="submit" value="Join" style="width: 50%; transform: translate(50%, 0%);"/>
+                {% endif %}
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% include "lobby/create-activity.html" %}
+<script src="{{url_for('static',filename='js/lobby.js')}}"></script>
+{% endblock %}

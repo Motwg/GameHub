@@ -1,0 +1,29 @@
+.cah-card {
+    border-style: outset;
+    border-radius: 10% 25%;
+    cursor: pointer;
+    display: block;
+
+    width: 140px;
+    height: 225px;
+    padding: 6px;
+    margin: 5px;
+}
+
+.card-container {
+    display: flex;
+}
+
+black-card {
+    background-color: black;
+    color: white;
+}
+
+white-card:hover {
+    background-color: ivory;
+}
+
+white-card {
+    background-color: white;
+    color: black;
+}

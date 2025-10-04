@@ -1,0 +1,9 @@
+Flask~=3.1.0
+Flask-SocketIO~=5.5.1
+plotly~=6.0.0
+pandas~=2.2.3
+numpy~=2.2.3
+inflection~=0.5.1
+MarkupSafe~=3.0.2
+scikit-learn~=1.6.1
+odfpy~=1.4.1

@@ -1,0 +1,1 @@
+gunicorn --config website/gunicorn_config.py 'website.gamehub:create_app()'
