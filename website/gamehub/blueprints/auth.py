@@ -1,12 +1,17 @@
 import functools
-import uuid
-
-from flask import current_app, url_for, flash
-from flask import (
-    Blueprint, g, redirect, request, session, Response
-)
-
 import os
+
+from flask import (
+    Blueprint,
+    Response,
+    current_app,
+    flash,
+    g,
+    redirect,
+    request,
+    session,
+    url_for,
+)
 
 from ..model.User import User
 from ..validators.auth import validate_username
@@ -23,7 +28,7 @@ def pre_operations():
 
     # REDIRECT http -> https
     if 'DYNO' in os.environ:
-        current_app.logger.critical("DYNO ENV !!!!")
+        current_app.logger.critical('DYNO ENV !!!!')
         if request.url.startswith('http://'):
             url = request.url.replace('http://', 'https://', 1)
             return redirect(url, code=301)
@@ -58,10 +63,11 @@ def username_required(view):
             return redirect(url_for('bl_lobby.lobby'), 302)
 
         return view(*args, **kwargs)
+
     return wrapped_view
 
 
-@bp.route('/login', methods=('POST', ))
+@bp.route('/login', methods=('POST',))
 def login():
     username = request.get_json().get('username')
     print(User(username)['username'])

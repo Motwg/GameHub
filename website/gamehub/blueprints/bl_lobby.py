@@ -1,11 +1,24 @@
 from flask import (
-    Blueprint, render_template, request, send_from_directory, current_app, flash, Response, session, redirect, url_for
+    Blueprint,
+    render_template,
+    request,
+    send_from_directory,
+    current_app,
+    Response,
+    session,
+    redirect,
+    url_for,
 )
 
-from ..controllers.cah import lang_packs, get_cards_generators
-from ..controllers.gamehub import activities, rooms, generate_unique_room_code
+
+from ..controllers.rooms import get_all_rooms
 from ..utils import set_menu
 from ..blueprints.auth import manage_cookie_policy, username_required
+from ..model.Room import Room
+from website.gamehub.controllers.activities import get_activity
+from website.gamehub.controllers.rooms import get_room
+from website.gamehub.controllers.rooms import add_room
+
 
 bp = Blueprint('bl_lobby', __name__)
 
@@ -16,28 +29,32 @@ def lobby():
     return render_template(
         'lobby/lobby.html',
         mc=mc,
-        rooms=[{
-            'room_id': k,
-            'activity': activities[r['activity']],
-            'members': r['members'].values(),
-            'password': True if r['password'] else False
-        } for k, r in rooms.items()]
+        rooms=[
+            {
+                'room_id': k,
+                'activity': get_activity(r['activity']),
+                'members': r['members'].values(),
+                'password': True if r['password'] else None,
+            }
+            for k, r in get_all_rooms()
+        ],
     )
 
 
 @bp.route('/room/<string:room_id>', methods=('GET',))
 @username_required
 def join_room(room_id):
-    room = rooms[room_id]
-    print(room_id, room)
+    room = get_room(room_id)
+    print('Join room: ', room_id, room)
+    if room is None:
+        return Response(404)
     if room['password']:
+        # To Do: Add handling room psswd
         return 'Room is protected by password'
     session['room'] = room_id
     mc = set_menu(f'room {room_id}')
     return render_template(
-        f'activities/{room['activity']}.html',
-        mc=mc,
-        room=room
+        f'activities/{room["activity"]}.html', mc=mc, room=room
     )
 
 
@@ -46,23 +63,19 @@ def join_room(room_id):
 def create_room():
     if request.method == 'POST':
         data = request.get_json()
-        room_id = generate_unique_room_code(6)
-        cards = get_cards_generators('PL')
-
-        rooms[room_id] = {
-            'members': {},
-            'password': data.get('password', False),
-            'activity': data.get('activity', 'cah'),
-            'cards': {
-                'black': cards['black'],
-                'white': cards['white']
-            },
-        }
-        session['room'] = room_id
+        room = Room(
+            data.get('activity', 'chat'),
+            data.get('password', None),
+        )
+        add_room(room)
+        session['room'] = room.room_id
+        print('Create room: ', room.room_id, room)
         return Response(status=201)
     elif request.method == 'GET':
         if session.get('room'):
-            return redirect(url_for('bl_lobby.join_room', room_id=session['room']), 302)
+            return redirect(
+                url_for('bl_lobby.join_room', room_id=session['room']), 302
+            )
         else:
             return redirect(url_for('bl_lobby.lobby'), 302)
 
@@ -71,7 +84,8 @@ def create_room():
 @manage_cookie_policy
 def about():
     mc = set_menu('about')
-    bar = create_plot()
+    # bar = create_plot()
+    bar = None
     return render_template('lobby/about.html', mc=mc, plot=bar)
 
 
@@ -96,25 +110,25 @@ def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
 
 
-import plotly
-import plotly.graph_objs as go
+# import plotly
+# import plotly.graph_objs as go
 
-import pandas as pd
-import numpy as np
-import json
+# import pandas as pd
+# import numpy as np
+# import json
 
 
-def create_plot():
-    generator = np.random.default_rng(42)
-    n = 40
-    x = np.linspace(0, 1, n)
-    y = generator.random(n)
-    df = pd.DataFrame({'x': x, 'y': y})  # creating a sample dataframe
-    data = [
-        go.Bar(
-            x=df['x'],  # assign x as the dataframe column 'x'
-            y=df['y']
-        )
-    ]
-    graph_json = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-    return graph_json
+# def create_plot():
+#     generator = np.random.default_rng(42)
+#     n = 40
+#     x = np.linspace(0, 1, n)
+#     y = generator.random(n)
+#     df = pd.DataFrame({'x': x, 'y': y})  # creating a sample dataframe
+#     data = [
+#         go.Bar(
+#             x=df['x'],  # assign x as the dataframe column 'x'
+#             y=df['y'],
+#         )
+#     ]
+#     graph_json = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+#     return graph_json

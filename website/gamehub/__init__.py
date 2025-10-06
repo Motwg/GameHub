@@ -2,10 +2,9 @@ import json
 
 from flask import Flask
 
-from .extensions import socketio
-
-from .jinjafilters import slugify, display_error, display_message
 from .errorhandlers import error_404, error_500
+from .extensions import socketio
+from .jinjafilters import display_error, display_message, slugify
 
 
 def create_app(mode='prod'):
@@ -17,16 +16,18 @@ def create_app(mode='prod'):
         app.config.from_file('../prod-config.json', load=json.load)
     else:
         raise AttributeError(f'Failed to load flask with mode {mode}')
+
     socketio.init_app(app, cors_allowed_origins='*')
-    from .blueprints import cah
+    from .blueprints import bl_chat
 
     with app.app_context():
-
         # Add Blueprints
         from .blueprints import bl_lobby
+
         app.register_blueprint(bl_lobby.bp)
 
         from .blueprints import auth
+
         app.register_blueprint(auth.bp)
 
     # Add error handlers

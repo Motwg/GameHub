@@ -24,6 +24,6 @@ def set_menu(section):
     menu_config = {}
 
     if len(section) > 0:
-        menu_config[section] = "active"
+        menu_config[section] = 'active'
 
     return menu_config
