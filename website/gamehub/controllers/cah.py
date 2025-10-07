@@ -35,4 +35,5 @@ lang_packs = {k: get_lang_pack(k) for k in packs.keys()}
 if __name__ == '__main__':
     gens = get_cards_generators('PL')
     print(gens)
-    print(next(gens['black']), next(gens['white']))
+    black = gens['black']
+    print(next(black), next(gens['white']))

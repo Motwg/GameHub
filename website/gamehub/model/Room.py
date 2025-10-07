@@ -1,12 +1,12 @@
+import random
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Any, Iterator, Literal
 from string import ascii_uppercase
-import random
+from typing import Any, Literal
 
+from website.gamehub.controllers.cah import get_cards_generators
 from website.gamehub.model.User import User
-
-from ..controllers.cah import get_cards_generators
 
 
 def generate_room_code(length: int) -> str:

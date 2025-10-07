@@ -12,9 +12,11 @@ def add_room(room: Room) -> bool:
 
 
 def delete_room(room_id: str) -> bool:
-    if db.rooms.pop(room_id) is not None:
+    try:
+        _ = db.rooms.pop(room_id)
         return True
-    return False
+    except KeyError:
+        return False
 
 
 def update_room(room: Room) -> bool:
@@ -30,4 +32,4 @@ def get_room(room_id: str) -> Room | None:
 
 
 def get_all_rooms() -> dict[str, Room]:
-    return db.rooms.items()
+    return db.rooms

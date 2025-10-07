@@ -1,4 +1,5 @@
-from website.gamehub import create_app, socketio
+from website.gamehub import create_app
+from website.gamehub.extensions import socketio
 
 app = create_app('test')
 

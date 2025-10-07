@@ -1,3 +1,4 @@
+from typing import Any
 import uuid
 from dataclasses import dataclass, field
 
@@ -8,8 +9,8 @@ class User:
     username: str
     is_registered: bool = field(default=False, kw_only=True)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return getattr(self, key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any):
         setattr(self, key, value)

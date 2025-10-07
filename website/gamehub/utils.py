@@ -1,7 +1,8 @@
+from typing import Any
 from flask import request
 
 
-def convert_datatime(rows: dict, field_name: str):
+def convert_datatime(rows: dict[Any, Any], field_name: str):
     for r in rows:
         r[field_name] = r[field_name].strftime('%d/%m/%Y, %H:%M:%S')
 
@@ -20,8 +21,8 @@ def read_data_from_form():
     return record
 
 
-def set_menu(section):
-    menu_config = {}
+def set_menu(section: str) -> dict[str, str]:
+    menu_config: dict[str, str] = {}
 
     if len(section) > 0:
         menu_config[section] = 'active'

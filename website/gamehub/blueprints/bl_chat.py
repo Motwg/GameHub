@@ -1,3 +1,4 @@
+from typing import Any
 from flask import session
 from flask_socketio import join_room, leave_room, send
 
@@ -9,26 +10,27 @@ from website.gamehub.controllers.rooms import update_room
 
 @socketio.on('message')
 @username_required
-def handle_message(message):
+def handle_message(message: str):
     print(f'Received message: {message}')
     send(f'{session["user"]["username"]}: {message}', to=session['room'])
 
 
 @socketio.on('connect')
 @username_required
-def handle_connect(data):
-    print(f'User {session["user"]["username"]} Connected!', data)
-    room = get_room(session['room'])
-    user_id, username = session['user']['user_id'], session['user']['username']
+def handle_connect(data: Any):
+    if room := get_room(session['room'])
+        user_id, username = session['user']['user_id'], session['user']['username']
 
-    room['members'][user_id] = username
-    update_room(room)
-    join_room(session['room'])
-    send(f'{session["user"]["username"]} joined room!', to=session['room'])
+        room['members'][user_id] = username
+        if update_room(room):
+            join_room(session['room'])
+
+            print(f'User {session["user"]["username"]} Connected!', data)
+            send(f'{session["user"]["username"]} joined room!', to=session['room'])
 
 
 @socketio.on('disconnect')
-def handle_disconnect(data):
+def handle_disconnect(data: Any):
     print(f'User {session["user"]["username"]} Disconnected!', data)
     room_id = session['room']
     user_id = session['user']['user_id']

@@ -1,5 +1,5 @@
-import functools
 import os
+from typing import Callable, ParamSpec, TypeVar
 
 from flask import (
     Blueprint,
@@ -18,6 +18,8 @@ from ..validators.auth import validate_username
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+T = TypeVar('T')
+P = ParamSpec('P')
 
 # IMPORTANT! Called for every request
 @bp.before_app_request
@@ -43,24 +45,23 @@ def pre_operations():
 
 
 # WRAPPER FOR COOKIE SETTINGS
-def manage_cookie_policy(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
+def manage_cookie_policy(view: Callable[P, T]) -> Callable[P, T]:
+    # @functools.wraps(view)
+    def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> T:
         g.showCookieAlert = False  # DEFAULT
         if g.policyCode is None or g.policyCode == -1:
             g.showCookieAlert = True
 
-        return view(**kwargs)
+        return view(*args, **kwargs)
 
     return wrapped_view
 
 
-def username_required(view):
-    @functools.wraps(view)
-    def wrapped_view(*args, **kwargs):
+def username_required(view: Callable[P, T]) -> Callable[P, T]:
+    def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> T:
         if 'user' not in session:
             flash('miss_username')
-            return redirect(url_for('bl_lobby.lobby'), 302)
+            # return redirect(url_for('bl_lobby.lobby'), 302)
 
         return view(*args, **kwargs)
 
