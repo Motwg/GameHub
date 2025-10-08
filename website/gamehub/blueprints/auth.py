@@ -1,4 +1,5 @@
 import os
+from functools import wraps
 from typing import Callable, ParamSpec
 
 from flask import (
@@ -49,7 +50,7 @@ def pre_operations():
 def manage_cookie_policy(
     view: Callable[P, ResponseValue],
 ) -> Callable[P, ResponseValue]:
-    # @functools.wraps(view)
+    @wraps(view)
     def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> ResponseValue:
         g.showCookieAlert = False  # DEFAULT
         if g.policyCode is None or g.policyCode == -1:
@@ -61,6 +62,7 @@ def manage_cookie_policy(
 
 
 def username_required(view: Callable[P, ResponseValue]) -> Callable[P, ResponseValue]:
+    @wraps(view)
     def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> ResponseValue:
         if 'user' not in session:
             flash('miss_username')
