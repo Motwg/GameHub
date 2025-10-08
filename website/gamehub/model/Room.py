@@ -1,12 +1,12 @@
+import random
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Any, Iterator, Literal
 from string import ascii_uppercase
-import random
+from typing import Any, Literal
 
+from website.gamehub.controllers.cah import get_cards_generators
 from website.gamehub.model.User import User
-
-from ..controllers.cah import get_cards_generators
 
 
 def generate_room_code(length: int) -> str:
@@ -14,11 +14,12 @@ def generate_room_code(length: int) -> str:
 
 
 id_generator = partial(generate_room_code, length=6)
+LiteralActivities = Literal['cah', 'chat']
 
 
 @dataclass(slots=True)
 class Room:
-    activity: Literal['cah', 'chat']
+    activity: LiteralActivities
     password: None | str = None
     members: dict[str, User] = field(default_factory=dict)
     cards: None | dict[str, Iterator[str]] = field(init=False, default=None)

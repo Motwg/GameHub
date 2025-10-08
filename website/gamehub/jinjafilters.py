@@ -1,21 +1,22 @@
+from typing import Literal, LiteralString
 from inflection import parameterize
 from markupsafe import Markup
 
 
-def slugify(variable):
+def slugify(variable: str):
     return parameterize(variable)[:80].rstrip('-')
 
 
 # This data would better go in a database...
 error_dict = {
-    "Err1": "ERROR 1: watch out for error n.1!",
-    "Err2": "ERROR 2: watch out for error n.2!",
-    "Err9": "ERROR 9: watch out for error n.9!"
+    'Err1': 'ERROR 1: watch out for error n.1!',
+    'Err2': 'ERROR 2: watch out for error n.2!',
+    'Err9': 'ERROR 9: watch out for error n.9!',
 }
 
 
-def display_error(err_num):
-    key = "Err" + str(err_num)
+def display_error(err_num: Literal[1, 2, 9]):
+    key = 'Err' + str(err_num)
     result = error_dict[key]
     return result
 
@@ -25,7 +26,7 @@ msg_dict = {
 }
 
 
-def display_message(msg_key):
+def display_message(msg_key: LiteralString):
     # THE DECORATOR IS NEEDED TO DISABLE CACHING OF JINJA CALLS!!!
     result = Markup(msg_dict.get(msg_key, 'Something gone wrong'))
     return result

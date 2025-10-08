@@ -1,5 +1,5 @@
 {
-  "SECRET_KEY":"MySessionSecret",
+  "SECRET_KEY": "MySessionSecret",
   "FLASK_RUN_HOST": "localhost",
   "FLASK_RUN_PORT": 8098,
 

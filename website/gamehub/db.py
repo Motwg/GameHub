@@ -1,12 +1,11 @@
 from dataclasses import dataclass
-from typing import Literal
 
-from website.gamehub.model.Room import Room
+from website.gamehub.model.Room import LiteralActivities, Room
 
 
 @dataclass(slots=True)
 class DB:
-    activities: dict[Literal['cah', 'chat'], str]
+    activities: dict[LiteralActivities, str]
     rooms: dict[str, Room]
 
 
