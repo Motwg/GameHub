@@ -3,6 +3,8 @@ from website.gamehub.model.Room import Room
 
 
 def add_room(room: Room) -> bool:
+    if get_room(room.room_id) == room:
+        return False
     while room.room_id in db.rooms:
         room.new_id()
     db.rooms[room.room_id] = room
