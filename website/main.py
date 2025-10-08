@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from website.gamehub import create_app
 from website.gamehub.extensions import socketio
 
