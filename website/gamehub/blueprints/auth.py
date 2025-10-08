@@ -21,6 +21,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 P = ParamSpec('P')
 
+
 # IMPORTANT! Called for every request
 @bp.before_app_request
 def pre_operations():
@@ -45,7 +46,9 @@ def pre_operations():
 
 
 # WRAPPER FOR COOKIE SETTINGS
-def manage_cookie_policy(view: Callable[P, ResponseValue]) -> Callable[P, ResponseValue]:
+def manage_cookie_policy(
+    view: Callable[P, ResponseValue],
+) -> Callable[P, ResponseValue]:
     # @functools.wraps(view)
     def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> ResponseValue:
         g.showCookieAlert = False  # DEFAULT

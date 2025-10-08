@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from website.gamehub.model.Room import LiteralActivities, Room
 
+
 @dataclass(slots=True)
 class DB:
     activities: dict[LiteralActivities, str]

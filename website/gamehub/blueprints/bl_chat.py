@@ -31,6 +31,7 @@ def handle_connect(data: Any):
             return Response(status=200)
     return Response(status=400)
 
+
 @socketio.on('disconnect')
 def handle_disconnect(data: Any):
     print(f'User {session["user"]["username"]} Disconnected!', data)
