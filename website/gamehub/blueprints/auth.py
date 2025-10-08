@@ -1,6 +1,7 @@
 import os
+from collections.abc import Callable
 from functools import wraps
-from typing import Callable, ParamSpec
+from typing import ParamSpec
 
 from flask import (
     Blueprint,
@@ -15,8 +16,8 @@ from flask import (
 )
 from flask.typing import ResponseValue
 
-from ..model.User import User
-from ..validators.auth import validate_username
+from website.gamehub.model.User import User
+from website.gamehub.validators.auth import validate_username
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -25,11 +26,10 @@ P = ParamSpec('P')
 
 # IMPORTANT! Called for every request
 @bp.before_app_request
-def pre_operations():
+def pre_operations() -> ResponseValue | None:
     # static requests bypass
     if request.endpoint == 'static':
-        return
-
+        return None
     # REDIRECT http -> https
     if 'DYNO' in os.environ:
         current_app.logger.critical('DYNO ENV !!!!')
@@ -39,17 +39,14 @@ def pre_operations():
 
     g.policyCode = -1  # SET DEFAULT INDEPENDENTLY TO WRAPPER
     policy_code = session.get('cookie-policy')
-    # print(f'AUTH: policy_code = {policy_code}')
-    # possible values Null -> no info, 0 -> Strict, 1 -> Minimal,
-    #                                 2 -> Analysis, 3 -> All
+    # possible values Null -> no info, 0 -> Strict, 1 -> Minimal, 2 -> Analysis, 3 -> All
     if policy_code is not None:
         g.policyCode = policy_code
+    return None
 
 
 # WRAPPER FOR COOKIE SETTINGS
-def manage_cookie_policy(
-    view: Callable[P, ResponseValue],
-) -> Callable[P, ResponseValue]:
+def manage_cookie_policy(view: Callable[P, ResponseValue]) -> Callable[P, ResponseValue]:
     @wraps(view)
     def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> ResponseValue:
         g.showCookieAlert = False  # DEFAULT
@@ -74,9 +71,8 @@ def username_required(view: Callable[P, ResponseValue]) -> Callable[P, ResponseV
 
 
 @bp.route('/login', methods=('POST',))
-def login():
+def login() -> ResponseValue:
     username = request.get_json().get('username')
-    print(User(username)['username'])
     if validate_username(username):
         user = session.get('user', User(username))
         user['username'] = username
@@ -86,7 +82,7 @@ def login():
 
 
 @bp.route('/ajcookiepolicy/', methods=('GET', 'POST'))
-def ajcookiepolicy():
+def ajcookiepolicy() -> ResponseValue:
     # DECIDE COOKIE PREFERENCE STRATEGY
     if request.method == 'POST':
         data: dict[str, str | bool] = request.get_json()

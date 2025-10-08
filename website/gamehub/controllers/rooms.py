@@ -1,12 +1,10 @@
-from website.gamehub.model.Room import Room
 from website.gamehub.db import db
+from website.gamehub.model.Room import Room
 
 
 def add_room(room: Room) -> bool:
-    while room.room_id in db.rooms.keys():
-        print(f'Id needs to be changed from {room.room_id}')
+    while room.room_id in db.rooms:
         room.new_id()
-        print(f'Changing to {room.room_id}')
     db.rooms[room.room_id] = room
     return True
 
@@ -14,17 +12,23 @@ def add_room(room: Room) -> bool:
 def delete_room(room_id: str) -> bool:
     try:
         _ = db.rooms.pop(room_id)
-        return True
     except KeyError:
         return False
+    except Exception:
+        raise
+    else:
+        return True
 
 
 def update_room(room: Room) -> bool:
     try:
         db.rooms[room.room_id] = room
-        return True
     except KeyError:
         return False
+    except Exception:
+        raise
+    else:
+        return True
 
 
 def get_room(room_id: str) -> Room | None:
