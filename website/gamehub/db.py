@@ -1,9 +1,6 @@
 from dataclasses import dataclass
-from typing import Literal
 
-from website.gamehub.model.Room import Room
-
-LiteralActivities = Literal['cah', 'chat']
+from website.gamehub.model.Room import LiteralActivities, Room
 
 @dataclass(slots=True)
 class DB:

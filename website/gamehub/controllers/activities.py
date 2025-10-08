@@ -1,4 +1,5 @@
-from website.gamehub.db import LiteralActivities, db
+from website.gamehub.db import db
+from website.gamehub.model.Room import LiteralActivities
 
 
 def get_activity(activity: LiteralActivities) -> str:

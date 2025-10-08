@@ -3,10 +3,9 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import partial
 from string import ascii_uppercase
-from typing import Any
+from typing import Any, Literal
 
 from website.gamehub.controllers.cah import get_cards_generators
-from website.gamehub.db import LiteralActivities
 from website.gamehub.model.User import User
 
 
@@ -15,6 +14,7 @@ def generate_room_code(length: int) -> str:
 
 
 id_generator = partial(generate_room_code, length=6)
+LiteralActivities = Literal['cah', 'chat']
 
 
 @dataclass(slots=True)
