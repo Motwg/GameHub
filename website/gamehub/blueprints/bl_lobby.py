@@ -9,7 +9,7 @@ from flask import (
     session,
     url_for,
 )
-from flask.typing import ResponseReturnValue
+from flask.typing import ResponseValue
 
 from website.gamehub.controllers.activities import get_activity
 from website.gamehub.controllers.rooms import add_room, get_room
@@ -42,7 +42,7 @@ def lobby() -> str:
 
 @bp.route('/room/<string:room_id>', methods=('GET',))
 @username_required
-def join_room(room_id: str) -> ResponseReturnValue:
+def join_room(room_id: str) -> ResponseValue:
     room = get_room(room_id)
     print('Join room: ', room_id, room)
     if room is None:
@@ -59,7 +59,7 @@ def join_room(room_id: str) -> ResponseReturnValue:
 
 @bp.route('/room', methods=('POST', 'GET'))
 @username_required
-def create_room() -> ResponseReturnValue:
+def create_room() -> ResponseValue:
     if request.method == 'POST':
         data = request.get_json()
         room = Room(
@@ -82,7 +82,7 @@ def create_room() -> ResponseReturnValue:
 
 @bp.route('/about', methods=('GET', 'POST'))
 @manage_cookie_policy
-def about():
+def about() -> str:
     mc = set_menu('about')
     # bar = create_plot()
     bar = None
@@ -90,13 +90,13 @@ def about():
 
 
 @bp.route('/privacy-notice', methods=('GET', 'POST'))
-def privacy():
+def privacy() -> str:
     mc = set_menu('')
     return render_template('lobby/privacy-notice.html', mc=mc)
 
 
 @bp.route('/terms-of-service', methods=('GET', 'POST'))
-def terms_of_service():
+def terms_of_service() -> str:
     mc = set_menu('')
     return render_template('lobby/terms-of-service.html', mc=mc)
 

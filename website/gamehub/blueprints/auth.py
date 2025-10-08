@@ -1,5 +1,5 @@
 import os
-from typing import Callable, ParamSpec, TypeVar
+from typing import Callable, ParamSpec
 
 from flask import (
     Blueprint,
@@ -12,13 +12,13 @@ from flask import (
     session,
     url_for,
 )
+from flask.typing import ResponseValue
 
 from ..model.User import User
 from ..validators.auth import validate_username
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-T = TypeVar('T')
 P = ParamSpec('P')
 
 # IMPORTANT! Called for every request
@@ -45,9 +45,9 @@ def pre_operations():
 
 
 # WRAPPER FOR COOKIE SETTINGS
-def manage_cookie_policy(view: Callable[P, T]) -> Callable[P, T]:
+def manage_cookie_policy(view: Callable[P, ResponseValue]) -> Callable[P, ResponseValue]:
     # @functools.wraps(view)
-    def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> T:
+    def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> ResponseValue:
         g.showCookieAlert = False  # DEFAULT
         if g.policyCode is None or g.policyCode == -1:
             g.showCookieAlert = True
@@ -57,11 +57,11 @@ def manage_cookie_policy(view: Callable[P, T]) -> Callable[P, T]:
     return wrapped_view
 
 
-def username_required(view: Callable[P, T]) -> Callable[P, T]:
-    def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> T:
+def username_required(view: Callable[P, ResponseValue]) -> Callable[P, ResponseValue]:
+    def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> ResponseValue:
         if 'user' not in session:
             flash('miss_username')
-            # return redirect(url_for('bl_lobby.lobby'), 302)
+            return redirect(url_for('bl_lobby.lobby'), 302)
 
         return view(*args, **kwargs)
 
@@ -84,7 +84,7 @@ def login():
 def ajcookiepolicy():
     # DECIDE COOKIE PREFERENCE STRATEGY
     if request.method == 'POST':
-        data = request.json
+        data: dict[str, str | bool] = request.get_json()
         btn_name = data['btnselected']
         checkbox_analysis = data['checkboxAnalysis']
         checkbox_necessary = data['checkboxNecessary']

@@ -1,6 +1,5 @@
-from typing import Literal
-from website.gamehub.db import db
+from website.gamehub.db import LiteralActivities, db
 
 
-def get_activity(activity: Literal['cah']) -> str:
-    return db.activities.get(activity)
+def get_activity(activity: LiteralActivities) -> str:
+    return db.activities[activity]

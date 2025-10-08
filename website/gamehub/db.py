@@ -3,10 +3,11 @@ from typing import Literal
 
 from website.gamehub.model.Room import Room
 
+LiteralActivities = Literal['cah', 'chat']
 
 @dataclass(slots=True)
 class DB:
-    activities: dict[Literal['cah', 'chat'], str]
+    activities: dict[LiteralActivities, str]
     rooms: dict[str, Room]
 
 
