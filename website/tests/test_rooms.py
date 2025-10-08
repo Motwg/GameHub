@@ -75,18 +75,30 @@ class TestRoomsCRUD(unittest.TestCase):
         assert got.password == self.room.password
 
     def test_add_room_id_exists(self):
-        success_0 = add_room(self.room)
-        assert success_0
-        got_0 = db.rooms[self.room_id]
-        success_1 = add_room(self.room)
-        assert success_1
-        got_1 = db.rooms[self.room_id]
+        success = add_room(self.room)
+        assert success
+        assert len(db.rooms) == 4
 
-        assert got_0.room_id == got_1.room_id
-        assert len(db.rooms) == 5
+        failed = add_room(self.room)
+        assert not failed
+        assert len(db.rooms) == 4
+
+        got = db.rooms[self.room_id]
+        assert got.room_id == self.room_id
 
     def test_delete_room(self):
-        raise NotImplementedError
+        db.rooms[self.room_id] = self.room
+        assert len(db.rooms) == 4
+        assert self.room_id in db.rooms
+
+        success = delete_room(self.room_id)
+        assert success
+        assert len(db.rooms) == 3
+        assert self.room_id not in db.rooms
+
+        failed = delete_room(self.room_id)
+        assert not failed
+        assert len(db.rooms) == 3
 
     def test_update_room(self):
         raise NotImplementedError
