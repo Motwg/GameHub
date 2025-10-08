@@ -3,9 +3,10 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import partial
 from string import ascii_uppercase
-from typing import Any, Literal
+from typing import Any
 
 from website.gamehub.controllers.cah import get_cards_generators
+from website.gamehub.db import LiteralActivities
 from website.gamehub.model.User import User
 
 
@@ -18,7 +19,7 @@ id_generator = partial(generate_room_code, length=6)
 
 @dataclass(slots=True)
 class Room:
-    activity: Literal['cah', 'chat']
+    activity: LiteralActivities
     password: None | str = None
     members: dict[str, User] = field(default_factory=dict)
     cards: None | dict[str, Iterator[str]] = field(init=False, default=None)
