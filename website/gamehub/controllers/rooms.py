@@ -1,5 +1,7 @@
+import dataclasses
+
 from website.gamehub.db import db
-from website.gamehub.model.Room import Room
+from website.gamehub.model.room import Room
 
 
 def add_room(room: Room) -> bool:
@@ -24,7 +26,9 @@ def delete_room(room_id: str) -> bool:
 
 def update_room(room: Room) -> bool:
     try:
-        db.rooms[room.room_id] = room
+        room_reference = db.rooms[room.room_id]
+        for field in dataclasses.fields(Room):
+            setattr(room_reference, field.name, getattr(room, field.name))
     except KeyError:
         return False
     except Exception:

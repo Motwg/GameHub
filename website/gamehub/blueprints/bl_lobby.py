@@ -14,7 +14,7 @@ from flask.typing import ResponseValue
 from website.gamehub.blueprints.auth import manage_cookie_policy, username_required
 from website.gamehub.controllers.activities import get_activity
 from website.gamehub.controllers.rooms import add_room, get_all_rooms, get_room
-from website.gamehub.model.Room import Room
+from website.gamehub.model.room import Room
 from website.gamehub.utils import set_menu
 
 bp = Blueprint('bl_lobby', __name__)

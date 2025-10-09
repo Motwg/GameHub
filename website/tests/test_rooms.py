@@ -9,8 +9,8 @@ from website.gamehub.controllers.rooms import (
     update_room,
 )
 from website.gamehub.db import db
-from website.gamehub.model.Room import Room
-from website.gamehub.model.User import User
+from website.gamehub.model.room import Room
+from website.gamehub.model.user import User
 
 
 class TestRoomsCRUD(unittest.TestCase):
@@ -38,6 +38,7 @@ class TestRoomsCRUD(unittest.TestCase):
             password=self.password,
             members=self.members,
         )
+        self.cards = self.room.cards
 
     def test_get_room(self):
         room_id = 'chat1'
@@ -110,9 +111,10 @@ class TestRoomsCRUD(unittest.TestCase):
         assert success
         room = db.rooms[room_id]
 
-        assert old_room != new_room
+        assert old_room == new_room
         assert room == self.room
-        assert room.members == self.room.members
+        assert old_room.members == self.members
+        assert old_room.cards == self.cards
 
     def test_get_all_rooms(self):
         rooms = get_all_rooms()

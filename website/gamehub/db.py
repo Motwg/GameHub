@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from website.gamehub.model.Room import LiteralActivities, Room
+from website.gamehub.model.room import LiteralActivities, Room
 
 
 @dataclass(slots=True)
