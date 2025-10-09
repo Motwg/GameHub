@@ -1,4 +1,5 @@
 import unittest
+from collections import OrderedDict
 from typing import override
 
 from website.gamehub.controllers.rooms import (
@@ -25,7 +26,7 @@ class TestRoomsCRUD(unittest.TestCase):
                 password='test',
             ),
         }
-        self.user_id_0, self.user_id_1 = 'superTkUser', 'verona'
+        self.user_id_0, self.user_id_1 = ('31515-2v9uD', 'superTkUser'), ('12vDd3h-5dF', 'verona')
         self.activity, self.room_id, self.password, self.members = (
             'cah',
             'test',
@@ -49,7 +50,7 @@ class TestRoomsCRUD(unittest.TestCase):
         assert isinstance(room, Room)
         assert room.room_id == room_id
         assert room.activity == 'chat'
-        assert room.members == {}
+        assert room.members == OrderedDict()
         assert room.password is None
         assert room.cards is None
 

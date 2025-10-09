@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from flask import (
     Blueprint,
     Response,
@@ -11,10 +13,11 @@ from flask import (
 )
 from flask.typing import ResponseValue
 
-from website.gamehub.blueprints.auth import manage_cookie_policy, username_required
+from website.gamehub.blueprints.auth import login_required, manage_cookie_policy
 from website.gamehub.controllers.activities import get_activity
-from website.gamehub.controllers.rooms import add_room, get_all_rooms, get_room
+from website.gamehub.controllers.rooms import add_room, get_all_rooms, get_room, update_room
 from website.gamehub.model.room import Room
+from website.gamehub.model.user import User
 from website.gamehub.utils import set_menu
 
 bp = Blueprint('bl_lobby', __name__)
@@ -23,15 +26,17 @@ bp = Blueprint('bl_lobby', __name__)
 @bp.route('/', methods=('GET',))
 def lobby() -> str:
     mc: dict[str, str] = set_menu('lobby')
+    for k, r in get_all_rooms().items():
+        print(r.members)
     return render_template(
         'lobby/lobby.html',
         mc=mc,
         rooms=[
             {
                 'room_id': k,
-                'activity': get_activity(r['activity']),
-                'members': r['members'].values(),
-                'password': True if r['password'] else None,
+                'activity': get_activity(r.activity),
+                'members': map(str, r.members.keys()),
+                'password': bool(r.password),
             }
             for k, r in get_all_rooms().items()
         ],
@@ -39,27 +44,32 @@ def lobby() -> str:
 
 
 @bp.route('/room/<string:room_id>', methods=('GET',))
-@username_required
-def join_room(room_id: str) -> ResponseValue:
+@login_required
+def join_room(user: User, room_id: str) -> ResponseValue:
     room = get_room(room_id)
     if room is None:
         return Response(status=404)
-    if room['password']:
+    if room.password:
         # TODO: Add handling room psswd
         return 'Room is protected by password'
+    room.members[(str(user.user_id), user.username)] = user
+    if not update_room(room):
+        _ = room.members.pop((str(user.user_id), user.username))
+        return Response(status=404)
     session['room'] = room_id
     mc: dict[str, str] = set_menu(f'room {room_id}')
-    return render_template(f'activities/{room["activity"]}.html', mc=mc, room=room)
+    return render_template(f'activities/{room.activity}.html', mc=mc, room=room)
 
 
 @bp.route('/room', methods=('POST', 'GET'))
-@username_required
-def create_room() -> ResponseValue:
+@login_required
+def create_room(user: User) -> ResponseValue:
     if request.method == 'POST':
         data = request.get_json()
         room = Room(
             data.get('activity', 'chat'),
             data.get('password', None),
+            members=OrderedDict({(str(user.user_id), user.username): user}),
         )
         if add_room(room):
             session['room'] = room.room_id
