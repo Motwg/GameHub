@@ -101,7 +101,25 @@ class TestRoomsCRUD(unittest.TestCase):
         assert len(db.rooms) == 3
 
     def test_update_room(self):
-        raise NotImplementedError
+        room_id = 'chat1'
+        old_room = db.rooms[room_id]
+        new_room = self.room
+        new_room.room_id = room_id
+
+        success = update_room(self.room)
+        assert success
+        room = db.rooms[room_id]
+
+        assert old_room != new_room
+        assert room == self.room
+        assert room.members == self.room.members
+
+    def test_get_all_rooms(self):
+        rooms = get_all_rooms()
+
+        assert isinstance(rooms, dict)
+        assert len(rooms) == 3
+        assert all(isinstance(r, Room) for r in rooms.values())
 
 
 if __name__ == '__main__':
