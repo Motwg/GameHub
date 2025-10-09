@@ -6,7 +6,7 @@ from string import ascii_uppercase
 from typing import Any, Literal
 
 from website.gamehub.controllers.cah import get_cards_generators
-from website.gamehub.model.User import User
+from website.gamehub.model.user import User
 
 
 def generate_room_code(length: int) -> str:
@@ -25,15 +25,15 @@ class Room:
     cards: None | dict[str, Iterator[str]] = field(init=False, default=None)
     room_id: str = field(default_factory=id_generator)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.activity == 'cah':
             self.cards = get_cards_generators('PL')
 
     def __getitem__(self, key: str) -> Any:
         return getattr(self, key)
 
-    def __setitem__(self, key: str, value: Any):
+    def __setitem__(self, key: str, value: Any) -> None:
         setattr(self, key, value)
 
-    def new_id(self):
+    def new_id(self) -> None:
         self.room_id = id_generator()

@@ -1,6 +1,6 @@
-from typing import Any
 import uuid
 from dataclasses import dataclass, field
+from typing import Any
 
 
 @dataclass(slots=True)
@@ -12,5 +12,5 @@ class User:
     def __getitem__(self, key: str) -> Any:
         return getattr(self, key)
 
-    def __setitem__(self, key: str, value: Any):
+    def __setitem__(self, key: str, value: Any) -> None:
         setattr(self, key, value)

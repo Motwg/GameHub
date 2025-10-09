@@ -16,7 +16,7 @@ from flask import (
 )
 from flask.typing import ResponseValue
 
-from website.gamehub.model.User import User
+from website.gamehub.model.user import User
 from website.gamehub.validators.auth import validate_username
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
