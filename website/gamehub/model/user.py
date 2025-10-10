@@ -8,6 +8,7 @@ class User:
     username: str
     user_id: uuid.UUID = field(default_factory=uuid.uuid4, kw_only=True)
     is_registered: bool = field(default=False, kw_only=True)
+    is_ready: bool = field(default=False, kw_only=True)
 
     def __getitem__(self, key: str) -> Any:
         return getattr(self, key)

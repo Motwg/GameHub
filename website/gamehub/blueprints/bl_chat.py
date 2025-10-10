@@ -19,10 +19,11 @@ def handle_message(user: User, room: Room, message: str) -> Response:
 @socketio.on('connect')
 @room_access
 def handle_connect(user: User, room: Room) -> Response:
-    username = user.username
-
     join_room(room.room_id)
-    data = {'username': user.username, 'members': [m[1] for m in room.members]}
+    data = {
+        'username': user.username,
+        'members': [(m.username, m.is_ready) for m in room.members.values()],
+    }
     emit('new_connection', data, to=room.room_id)
     return Response(status=200)
 
@@ -32,7 +33,10 @@ def handle_connect(user: User, room: Room) -> Response:
 def handle_disconnect(user: User, room: Room) -> Response:
     room['members'].pop((user.user_id, user.username))
     session.pop('room')
-    data = {'username': user.username, 'members': [m[1] for m in room.members]}
+    data = {
+        'username': user.username,
+        'members': [(m.username, m.is_ready) for m in room.members.values()],
+    }
     emit('lost_connection', data, to=room.room_id)
     leave_room(room.room_id)
     _ = delete_room(room.room_id) if not bool(room['members']) else update_room(room)
