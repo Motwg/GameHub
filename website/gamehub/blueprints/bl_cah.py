@@ -3,11 +3,11 @@ from flask_socketio import send
 
 from website.gamehub.extensions import socketio
 
-from .auth import username_required
+from .auth import login_required
 
 
 @socketio.on('ready')
-@username_required
+# @login_required
 def handle_ready() -> Response:
     username, room_id = session['user']['username'], session['room']
     print(f'Player {username} is ready in room {room_id}')

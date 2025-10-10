@@ -1,7 +1,7 @@
 import os
 from collections.abc import Callable
 from functools import wraps
-from typing import ParamSpec
+from typing import Concatenate, ParamSpec
 
 from flask import (
     Blueprint,
@@ -16,6 +16,8 @@ from flask import (
 )
 from flask.typing import ResponseValue
 
+from website.gamehub.controllers.rooms import get_room
+from website.gamehub.model.room import Room
 from website.gamehub.model.user import User
 from website.gamehub.validators.auth import validate_username
 
@@ -58,16 +60,37 @@ def manage_cookie_policy(view: Callable[P, ResponseValue]) -> Callable[P, Respon
     return wrapped_view
 
 
-def username_required(view: Callable[P, ResponseValue]) -> Callable[P, ResponseValue]:
+def login_required(
+    view: Callable[Concatenate[User, P], ResponseValue],
+) -> Callable[P, ResponseValue]:
     @wraps(view)
-    def wrapped_view(*args: P.args, **kwargs: P.kwargs) -> ResponseValue:
-        if 'user' not in session:
+    def login_view(*args: P.args, **kwargs: P.kwargs) -> ResponseValue:
+        try:
+            user = User(session['user']['username'], user_id=session['user']['user_id'])
+            return view(user, *args, **kwargs)
+        except KeyError:
             flash('miss_username')
             return redirect(url_for('bl_lobby.lobby'), 302)
 
-        return view(*args, **kwargs)
+    return login_view
 
-    return wrapped_view
+
+def room_access(
+    view: Callable[Concatenate[User, Room, P], ResponseValue],
+) -> Callable[P, ResponseValue]:
+    @wraps(view)
+    @login_required
+    def access_view(user: User, *args: P.args, **kwargs: P.kwargs) -> ResponseValue:
+        try:
+            room = get_room(session['room'])
+            if room and (str(user.user_id), user.username) in room.members:
+                return view(user, room, *args, **kwargs)
+        except KeyError:
+            flash('miss_room')
+            return redirect(url_for('bl_lobby.lobby'), 302)
+        return Response(status=404)
+
+    return access_view
 
 
 @bp.route('/login', methods=('POST',))

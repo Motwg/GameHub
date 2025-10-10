@@ -1,9 +1,10 @@
 from typing import Literal, LiteralString
+
 from inflection import parameterize
 from markupsafe import Markup
 
 
-def slugify(variable: str):
+def slugify(variable: str) -> str:
     return parameterize(variable)[:80].rstrip('-')
 
 
@@ -15,18 +16,17 @@ error_dict = {
 }
 
 
-def display_error(err_num: Literal[1, 2, 9]):
+def display_error(err_num: Literal[1, 2, 9]) -> str:
     key = 'Err' + str(err_num)
-    result = error_dict[key]
-    return result
+    return error_dict[key]
 
 
 msg_dict = {
     'miss_username': '<p>Please enter your username</p>',
+    'miss_room': '<p>Please join a room</p>',
 }
 
 
-def display_message(msg_key: LiteralString):
+def display_message(msg_key: LiteralString) -> Markup:
     # THE DECORATOR IS NEEDED TO DISABLE CACHING OF JINJA CALLS!!!
-    result = Markup(msg_dict.get(msg_key, 'Something gone wrong'))
-    return result
+    return Markup('{}').format(msg_dict.get(msg_key, 'Something gone wrong'))
