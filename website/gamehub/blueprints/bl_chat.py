@@ -1,14 +1,12 @@
-from typing import Any
-
 from flask import Response, session
 from flask_socketio import emit, join_room, leave_room, send
 
-from website.gamehub.controllers.rooms import delete_room, get_room, update_room
+from website.gamehub.controllers.rooms import delete_room, update_room
 from website.gamehub.extensions import socketio
 from website.gamehub.model.room import Room
 from website.gamehub.model.user import User
 
-from .auth import login_required, room_access
+from .auth import room_access
 
 
 @socketio.on('message')
@@ -19,17 +17,14 @@ def handle_message(user: User, room: Room, message: str) -> Response:
 
 
 @socketio.on('connect')
-@login_required
-def handle_connect(user: User) -> Response:
-    if room := get_room(session['room']):
-        user_id, username = str(user.user_id), user.username
+@room_access
+def handle_connect(user: User, room: Room) -> Response:
+    username = user.username
 
-        join_room(room.room_id)
-
-        send(f'{username} joined room!', to=room.room_id)
-        emit('new_connection', username, to=room.room_id)
-        return Response(status=200)
-    return Response(status=400)
+    join_room(room.room_id)
+    send(f'{username} joined room!', to=room.room_id)
+    emit('new_connection', username, to=room.room_id)
+    return Response(status=200)
 
 
 @socketio.on('disconnect')

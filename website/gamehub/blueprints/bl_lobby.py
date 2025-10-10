@@ -26,8 +26,6 @@ bp = Blueprint('bl_lobby', __name__)
 @bp.route('/', methods=('GET',))
 def lobby() -> str:
     mc: dict[str, str] = set_menu('lobby')
-    for k, r in get_all_rooms().items():
-        print(r.members)
     return render_template(
         'lobby/lobby.html',
         mc=mc,
@@ -101,9 +99,6 @@ def terms_of_service() -> str:
     return render_template('lobby/terms-of-service.html', mc=mc)
 
 
-# MANAGE sitemap and robots calls
-# These files are usually in root, but for Flask projects must
-# be in the static folder
 @bp.route('/robots.txt')
 @bp.route('/sitemap.xml')
 def static_from_root() -> Response:
