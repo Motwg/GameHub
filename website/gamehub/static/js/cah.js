@@ -28,30 +28,4 @@ class WhiteCard extends Card {
 }
 customElements.define("white-card", WhiteCard);
 
-$(document).ready(() => {
-  // socket.io
-  let socket = io(hostname);
-
-  socket.on("connect", () => {
-    console.log("User connected!");
-  });
-
-  socket.on("message", (data) => {
-    textarea = $("#messages");
-    textarea.append(data + "\n");
-    textarea.scrollTop(textarea[0].scrollHeight);
-  });
-
-  socket.on("new_connection", (data) => {
-    console.log("new_connection: ", data);
-  });
-
-  socket.on("lost_connection", (data) => {
-    console.log("lost_connection: ", data);
-  });
-
-  $("#sendMsgButton").on("click", () => {
-    socket.send($("#message").val());
-    $("#message").val("");
-  });
-});
+$(document).ready(() => {});

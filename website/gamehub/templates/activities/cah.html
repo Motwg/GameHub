@@ -1,34 +1,30 @@
-{% extends "base.html" %}
-
-{% block metatags %}
-<meta name="description" content="Cards against humanity">
-{% endblock %}
-
-{% block scripts %}
-<!-- socket.io -->
-<script src="{{url_for('static', filename='external/js/socket.io.min.js')}}"></script>
+{% extends "activities/chat.html" %} {% block metatags %}
+<meta name="description" content="Cards against humanity" />
+{% endblock %} {% block scripts %} {{ super() }}
 <!-- css -->
-<link href="{{ url_for('static', filename='css/cah.css') }}" type="text/css" rel="stylesheet">
-<script>
-    const hostname = "{{ url_for('bl_lobby.lobby', _external=True) }}".replace('localhost', '127.0.0.1')
-</script>
-{% endblock %}
-
-{% block contents %}
-<div class="form-outline w-50" >
-    <textarea class="form-control" id="messages" rows="6" readonly></textarea>
-</div>
-<input type="text" id="message" placeholder="Message">
-<button class="btn btn-primary" id="sendMsgButton">Send</button>
+<link
+    href="{{ url_for('static', filename='css/cah.css') }}"
+    type="text/css"
+    rel="stylesheet"
+/>
+{% endblock %} {% block contents %} {{ super() }}
 
 <black-card>Co jest kolejną modną dietą?</black-card>
 Available cards:
 <div class="card-container">
-	<white-card>Głód.</white-card>
-	<white-card>Opowiadanie dowcipów o żydach w nieodpowiednim momencie.</white-card>
-	<white-card>To uczucie, gdy wydaje Ci się, że to tylko beknięcie, a okazuje się, że to rzyg.</white-card>
-	<white-card>Zamrażarka pełna organów.</white-card>
-	<white-card>Zrzucane żyrandolu na przeciwników i wjeżdżanie do góry po linie.</white-card>
+    <white-card>Głód.</white-card>
+    <white-card
+        >Opowiadanie dowcipów o żydach w nieodpowiednim momencie.</white-card
+    >
+    <white-card
+        >To uczucie, gdy wydaje Ci się, że to tylko beknięcie, a okazuje się, że
+        to rzyg.</white-card
+    >
+    <white-card>Zamrażarka pełna organów.</white-card>
+    <white-card
+        >Zrzucane żyrandolu na przeciwników i wjeżdżanie do góry po
+        linie.</white-card
+    >
 </div>
 
 <script src="{{url_for('static',filename='js/cah.js')}}"></script>

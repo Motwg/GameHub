@@ -1,21 +1,7 @@
-{% extends "base.html" %} {% block metatags %}
-<meta name="description" content="Chat" />
-{% endblock %} {% block scripts %}
-<!-- socket.io -->
-<script src="{{url_for('static', filename='external/js/socket.io.min.js')}}"></script>
-<!-- css -->
-<link
-    href="{{ url_for('static', filename='css/cah.css') }}"
-    type="text/css"
-    rel="stylesheet"
-/>
-<script>
-    const hostname = "{{ url_for('bl_lobby.lobby', _external=True) }}".replace(
-        "localhost",
-        "127.0.0.1",
-    );
-</script>
-{% endblock %} {% block contents %}
+{% extends "activities/base-activity.html" %} {% block metatags %}
+<meta name="description" content="Chat with friends" />
+{% endblock %} {% block scripts %} {{ super() }} {% endblock %} {% block
+contents %}
 <div class="form-outline w-50">
     <textarea class="form-control" id="messages" rows="6" readonly></textarea>
 </div>

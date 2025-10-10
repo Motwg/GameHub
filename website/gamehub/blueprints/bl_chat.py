@@ -22,7 +22,6 @@ def handle_connect(user: User, room: Room) -> Response:
     username = user.username
 
     join_room(room.room_id)
-    send(f'{username} joined room!', to=room.room_id)
     emit('new_connection', username, to=room.room_id)
     return Response(status=200)
 
@@ -32,7 +31,6 @@ def handle_connect(user: User, room: Room) -> Response:
 def handle_disconnect(user: User, room: Room) -> Response:
     room['members'].pop((user.user_id, user.username))
     session.pop('room')
-    send(f'{user.username} lost connection!', to=room.room_id)
     emit('lost_connection', user.username, to=room.room_id)
     leave_room(room.room_id)
     _ = delete_room(room.room_id) if not bool(room['members']) else update_room(room)

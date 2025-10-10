@@ -1,34 +1,10 @@
-class Card extends HTMLElement {
-  constructor() {
-    super();
-    this.setAttribute("class", "cah-card");
-    this.addEventListener("click", this.onclick);
-  }
-
-  onclick() {
-    console.log(this);
-  }
-}
-
-class BlackCard extends Card {
-  /**
-   * @param {int} whites
-   */
-  constructor(whites) {
-    super();
-    this.whites = whites;
-  }
-}
-customElements.define("black-card", BlackCard);
-
-class WhiteCard extends Card {
-  constructor() {
-    super();
-  }
-}
-customElements.define("white-card", WhiteCard);
-
 $(document).ready(() => {
+  textarea = $("#messages");
+  sendMessage = (msg) => {
+    textarea.append(msg + "\n");
+    textarea.scrollTop(textarea[0].scrollHeight);
+  };
+
   // socket.io
   let socket = io(hostname);
 
@@ -37,17 +13,15 @@ $(document).ready(() => {
   });
 
   socket.on("message", (data) => {
-    textarea = $("#messages");
-    textarea.append(data + "\n");
-    textarea.scrollTop(textarea[0].scrollHeight);
+    sendMessage(data);
   });
 
   socket.on("new_connection", (data) => {
-    console.log("new_connection: ", data);
+    sendMessage(data + " joined room!");
   });
 
   socket.on("lost_connection", (data) => {
-    console.log("lost_connection: ", data);
+    sendMessage(data + " left room!");
   });
 
   $("#sendMsgButton").on("click", () => {
