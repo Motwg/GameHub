@@ -1,12 +1,10 @@
 import random
 from collections import OrderedDict
-from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import partial
 from string import ascii_uppercase
 from typing import Any, Literal
 
-from website.gamehub.controllers.cah import get_cards_generators
 from website.gamehub.model.user import User
 
 
@@ -24,11 +22,7 @@ class Room:
     password: None | str = None
     members: OrderedDict[tuple[str, str], User] = field(default_factory=OrderedDict)
     room_id: str = field(default_factory=id_generator, kw_only=True)
-    cards: None | dict[str, Iterator[str]] = field(init=False, default=None)
-
-    def __post_init__(self) -> None:
-        if self.activity == 'cah':
-            self.cards = get_cards_generators('PL')
+    config: dict[str, Any] = field(default_factory=dict, init=False)
 
     def __getitem__(self, key: str) -> Any:
         return getattr(self, key)

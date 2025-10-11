@@ -1,7 +1,9 @@
+from collections.abc import Iterator
 from flask import Response
 from flask_socketio import emit
 
 from website.gamehub.blueprints.bl_chat import get_members
+from website.gamehub.controllers.cah import get_card_generator
 from website.gamehub.controllers.rooms import update_room
 from website.gamehub.extensions import socketio
 from website.gamehub.model.room import Room
@@ -29,6 +31,20 @@ def unready_room(room: Room) -> bool:
 
 
 def start_cah(room: Room) -> None:
-    emit('message', 'hihihi:3', to=room.room_id)
+    room.config.update(get_card_generator('PL', 'black'))
+    room.config.update(get_card_generator('PL', 'white'))
     if unready_room(room):
         emit('refresh_members', get_members(room), to=room.room_id)
+        give_cards(room)
+        emit('start_cah', 'hihihi:3', to=room.room_id)
+    print(room.members)
+
+
+def give_cards(room: Room, limit: int = 5) -> None:
+    generator = room.config['white']
+    for m in room.members.values():
+        cards = m.config.get('cards', [])
+        while len(cards) < limit:
+            cards.append(next(generator))
+        m.config['cards'] = cards
+        print(m)
