@@ -29,11 +29,9 @@ def get_cards_generators(lang: str) -> dict[str, Iterator[str]]:
 
 cards = get_cah_cards()
 packs = {k: list(g) for k, g in groupby(cards.keys(), key=lambda x: x[:2])}
-lang_packs = {k: get_lang_pack(k) for k in packs.keys()}
+lang_packs = {k: get_lang_pack(k) for k in packs}
 
 
 if __name__ == '__main__':
     gens = get_cards_generators('PL')
-    print(gens)
     black = gens['black']
-    print(next(black), next(gens['white']))

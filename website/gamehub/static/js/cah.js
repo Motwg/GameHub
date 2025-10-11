@@ -36,12 +36,10 @@ $(document).ready(() => {
   socket.on("acc_ready", () => {
     $("#readyButton").prop("disabled", true);
     $("#readyButton").hide();
-    console.log("got ready");
   });
 
   socket.on("game_stop", () => {
     $("#readyButton").prop("disabled", false);
     $("#readyButton").show();
-    console.log("not ready");
   });
 });
