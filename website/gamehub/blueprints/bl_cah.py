@@ -1,15 +1,22 @@
-from flask import Response, session
-from flask_socketio import send
+from flask import Response, json, jsonify
+from flask.typing import ResponseValue
+from flask_socketio import emit, send
 
 from website.gamehub.extensions import socketio
+from website.gamehub.model.room import Room
+from website.gamehub.model.user import User
 
-from .auth import login_required
+from .auth import room_access
 
 
 @socketio.on('ready')
-# @login_required
-def handle_ready() -> Response:
-    username, room_id = session['user']['username'], session['room']
-    print(f'Player {username} is ready in room {room_id}')
-    send(f'Player {username} is ready', to=room_id)
-    return Response(status=200)
+@room_access
+def handle_ready(user: User, room: Room, sid: str) -> ResponseValue:
+    room.members[(str(user.user_id), user.username)].is_ready = True
+    emit('acc_ready', to=sid)
+    data = {
+        'username': user.username,
+        'members': [(m.username, m.is_ready) for m in room.members.values()],
+    }
+    emit('change_status', data, to=room.room_id)
+    return Response(json.dumps({'errors': 'ok'}), status=200, mimetype='application/json')

@@ -18,7 +18,7 @@ def create_app(mode='prod'):
         raise AttributeError(f'Failed to load flask with mode {mode}')
 
     socketio.init_app(app, cors_allowed_origins='*')
-    from .blueprints import bl_chat
+    from .blueprints import bl_cah, bl_chat
 
     with app.app_context():
         # Add Blueprints
