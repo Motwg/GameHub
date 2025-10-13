@@ -1,4 +1,3 @@
-from collections.abc import Iterator
 from flask import Response
 from flask_socketio import emit
 
@@ -24,6 +23,13 @@ def handle_ready(user: User, room: Room, sid: str) -> Response:
     return Response(status=200)
 
 
+@socketio.on('my_cards')
+@room_access
+def my_cards(user: User, _: Room, sid: str) -> Response:
+    emit('my_cards', user.config['cards'], to=sid)
+    return Response(status=200)
+
+
 def unready_room(room: Room) -> bool:
     for k in room.members:
         room.members[k].is_ready = False
@@ -35,9 +41,12 @@ def start_cah(room: Room) -> None:
     room.config.update(get_card_generator('PL', 'white'))
     if unready_room(room):
         emit('refresh_members', get_members(room), to=room.room_id)
-        give_cards(room)
-        emit('start_cah', 'hihihi:3', to=room.room_id)
-    print(room.members)
+        next_round(room)
+
+
+def next_round(room: Room) -> None:
+    give_cards(room)
+    emit('next_round', to=room.room_id)
 
 
 def give_cards(room: Room, limit: int = 5) -> None:
@@ -47,4 +56,3 @@ def give_cards(room: Room, limit: int = 5) -> None:
         while len(cards) < limit:
             cards.append(next(generator))
         m.config['cards'] = cards
-        print(m)
