@@ -11,23 +11,13 @@
 
 <button class="btn btn-secondary" id="readyButton">Ready</button>
 
-<black-card>Co jest kolejną modną dietą?</black-card>
-Available cards:
-<div class="card-container">
-    <white-card>Głód.</white-card>
-    <white-card
-        >Opowiadanie dowcipów o żydach w nieodpowiednim momencie.</white-card
-    >
-    <white-card
-        >To uczucie, gdy wydaje Ci się, że to tylko beknięcie, a okazuje się, że
-        to rzyg.</white-card
-    >
-    <white-card>Zamrażarka pełna organów.</white-card>
-    <white-card
-        >Zrzucane żyrandolu na przeciwników i wjeżdżanie do góry po
-        linie.</white-card
-    >
-</div>
+<!--<black-card>Co jest kolejną modną dietą?</black-card>-->
+
+<fieldset>
+    <legend>Cards:</legend>
+    <div id="cards" class="card-container"></div>
+</fieldset>
+<button class="btn btn-primary" id="confirmButton">Confirm</button>
 
 <script src="{{url_for('static',filename='js/cah.js')}}"></script>
 {% endblock %}

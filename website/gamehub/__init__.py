@@ -1,4 +1,5 @@
 import json
+from typing import Literal
 
 from flask import Flask
 
@@ -7,15 +8,13 @@ from .extensions import socketio
 from .jinjafilters import display_error, display_message, slugify
 
 
-def create_app(mode='prod'):
-    if mode == 'test':
+def create_app(mode: Literal['test', 'prod'] = 'prod') -> Flask:
+    if mode == 'prod':
         app = Flask(__name__, instance_relative_config=False)
-        app.config.from_file('../test-config.json', load=json.load)
-    elif mode == 'prod':
-        app = Flask(__name__, instance_relative_config=False)
-        app.config.from_file('../prod-config.json', load=json.load)
+        _ = app.config.from_file('../prod-config.json', load=json.load)
     else:
-        raise AttributeError(f'Failed to load flask with mode {mode}')
+        app = Flask(__name__, instance_relative_config=False)
+        _ = app.config.from_file('../test-config.json', load=json.load)
 
     socketio.init_app(app, cors_allowed_origins='*')
     from .blueprints import bl_cah, bl_chat

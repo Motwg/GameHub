@@ -6,16 +6,16 @@ $(document).ready(() => {
   };
 
   let memberList = $("#members");
-  let addMember = (username, is_ready, value) => {
+  let addMember = (m) => {
+    console.log(m);
     let li = document.createElement("li");
     let span = document.createElement("span");
-    li.innerHTML = username;
+    li.innerHTML = m.username;
     li.setAttribute(
       "class",
       "list-group-item d-flex justify-content-between align-items-center",
     );
-    span.innerHTML = is_ready ? "&#10004   " + value : value;
-    console.log(span);
+    span.innerHTML = m.is_ready ? "&#10004   " + m.points : m.points;
     span.setAttribute("class", "badge badge-primary");
     li.appendChild(span);
     memberList.append(li);
@@ -24,7 +24,7 @@ $(document).ready(() => {
   let refreshMembers = (members) => {
     memberList.empty();
     members.forEach((member) => {
-      addMember(member[0], member[1], 0);
+      addMember(member);
     });
   };
 
@@ -47,13 +47,12 @@ $(document).ready(() => {
     refreshMembers(data.members);
   });
 
+  socket.on("refresh_members", (members) => {
+    refreshMembers(members);
+  });
+
   $("#sendMsgButton").on("click", () => {
     socket.send($("#message").val());
     $("#message").val("");
-  });
-
-  socket.on("change_status", (data) => {
-    sendMessage(data.username + " is ready!");
-    refreshMembers(data.members);
   });
 });

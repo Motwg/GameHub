@@ -14,6 +14,10 @@
     display: flex;
 }
 
+.card-container:focus-within {
+    outline: 0.2em solid blue;
+}
+
 black-card {
     background-color: black;
     color: white;
@@ -26,4 +30,19 @@ white-card:hover {
 white-card {
     background-color: white;
     color: black;
+}
+
+input:checked + label > white-card {
+    color: red;
+    outline: 0.4em solid darkseagreen;
+}
+
+.visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
 }

@@ -6,6 +6,7 @@ from typing import Concatenate, ParamSpec
 from flask import (
     Blueprint,
     Response,
+    abort,
     current_app,
     flash,
     g,
@@ -83,12 +84,13 @@ def room_access(
     def access_view(user: User, *args: P.args, **kwargs: P.kwargs) -> ResponseValue:
         try:
             room = get_room(session['room'])
-            if room and (str(user.user_id), user.username) in room.members:
-                return view(user, room, *args, **kwargs)
+            if room:
+                r_user = room.members[(str(user.user_id), user.username)]
+                return view(r_user, room, *args, **kwargs)
         except KeyError:
             flash('miss_room')
             return redirect(url_for('bl_lobby.lobby'), 302)
-        return Response(status=404)
+        return abort(404)
 
     return access_view
 

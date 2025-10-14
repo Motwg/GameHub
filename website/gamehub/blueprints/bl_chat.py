@@ -1,3 +1,6 @@
+import dataclasses
+from typing import Any
+
 from flask import Response, session
 from flask_socketio import emit, join_room, leave_room, send
 
@@ -22,8 +25,9 @@ def handle_connect(user: User, room: Room) -> Response:
     join_room(room.room_id)
     data = {
         'username': user.username,
-        'members': [(m.username, m.is_ready) for m in room.members.values()],
+        'members': get_members(room),
     }
+    emit('game_stop', to=room.room_id)
     emit('new_connection', data, to=room.room_id)
     return Response(status=200)
 
@@ -35,9 +39,14 @@ def handle_disconnect(user: User, room: Room) -> Response:
     session.pop('room')
     data = {
         'username': user.username,
-        'members': [(m.username, m.is_ready) for m in room.members.values()],
+        'members': get_members(room),
     }
+    emit('game_stop', to=room.room_id)
     emit('lost_connection', data, to=room.room_id)
     leave_room(room.room_id)
     _ = delete_room(room.room_id) if not bool(room['members']) else update_room(room)
     return Response(status=200)
+
+
+def get_members(room: Room) -> list[dict[str, Any]]:
+    return [dataclasses.asdict(m) for m in room.members.values()]

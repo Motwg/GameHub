@@ -1,14 +1,10 @@
-from flask import g, render_template
+from flask import Response, g, render_template
 
 
 # error handlers
-def error_404(e: Exception) -> tuple[str, int]:
-    # mc is for the menu highlighting, which in this case should not be set
-    print(f'Error 404: {e}')
-    return render_template('error-pages/error404.html', mc='', g=g), 404
+def error_404(e: Exception) -> Response:
+    return Response(render_template('error-pages/error404.html', mc='', g=g), status=404)
 
 
-def error_500(e: Exception) -> tuple[str, int]:
-    # mc is for the menu highlighting, which in this case should not be set
-    print(f'Error 505: {e}')
-    return render_template('error-pages/error500.html', mc='', g=g), 500
+def error_500(e: Exception) -> Response:
+    return Response(render_template('error-pages/error500.html', mc='', g=g), status=500)

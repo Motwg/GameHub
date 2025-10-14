@@ -12,7 +12,7 @@ class DB:
 db = DB(
     {'cah': 'Cards Against Humanity', 'chat': 'Chat with friends'},
     {
-        '14HKE': Room('cah', room_id='14HKE'),
+        '14HKE': Room('chat', room_id='14HKE'),
         '13HKE': Room('cah', room_id='13HKE'),
     },
 )

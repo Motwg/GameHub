@@ -3,6 +3,7 @@ from collections import OrderedDict
 from flask import (
     Blueprint,
     Response,
+    abort,
     current_app,
     redirect,
     render_template,
@@ -46,14 +47,14 @@ def lobby() -> str:
 def join_room(user: User, room_id: str) -> ResponseValue:
     room = get_room(room_id)
     if room is None:
-        return Response(status=404)
+        return abort(404)
     if room.password:
         # TODO: Add handling room psswd
-        return 'Room is protected by password'
+        return abort(404)
     room.members[(str(user.user_id), user.username)] = user
     if not update_room(room):
         _ = room.members.pop((str(user.user_id), user.username))
-        return Response(status=404)
+        return abort(404)
     session['room'] = room_id
     mc: dict[str, str] = set_menu(f'room {room_id}')
     return render_template(f'activities/{room.activity}.html', mc=mc, room=room)
@@ -76,7 +77,7 @@ def create_room(user: User) -> ResponseValue:
         if session.get('room'):
             return redirect(url_for('bl_lobby.join_room', room_id=session['room']), 302)
         return redirect(url_for('bl_lobby.lobby'), 302)
-    return Response(status=404)
+    return abort(404)
 
 
 @bp.route('/about', methods=('GET', 'POST'))
@@ -104,4 +105,4 @@ def terms_of_service() -> str:
 def static_from_root() -> Response:
     if path_dir := current_app.static_folder:
         return send_from_directory(path_dir, request.path[1:])
-    return Response(status=404)
+    return abort(404)
