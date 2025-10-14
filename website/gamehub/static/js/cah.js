@@ -48,9 +48,20 @@ $(document).ready(() => {
 
   socket.on("my_cards", (cards) => {
     cards_container = $("#cards");
-    cards.forEach((card) => {
-      console.log(card);
-      cards_container.append(new WhiteCard(card));
+    cards.forEach((card, ind) => {
+      let text = `card-${ind}`;
+      let label = document.createElement("label");
+      label.setAttribute("for", text);
+
+      let input = document.createElement("input");
+      input.setAttribute("type", "radio");
+      input.setAttribute("name", "card");
+      input.setAttribute("id", text);
+      // input.setAttribute("value", text);
+      input.setAttribute("class", "visually-hidden");
+      cards_container.append(input);
+      label.append(new WhiteCard(card));
+      cards_container.append(label);
     });
   });
 });
