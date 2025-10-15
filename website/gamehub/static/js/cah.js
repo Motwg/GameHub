@@ -43,12 +43,21 @@ $(document).ready(() => {
   });
 
   socket.on("next_round", () => {
-    socket.emit("my_cards", socket.id);
+    socket.emit("get_turn_data", socket.id);
+    $("#confirmButton").prop("disabled", false);
+    $("#confirmButton").show();
   });
 
-  socket.on("my_cards", (cards) => {
+  socket.on("get_turn_data", (data) => {
     cards_container = $("#cards");
-    cards.forEach((card, ind) => {
+    if (data.is_my_turn) {
+      console.log("My turn");
+      // TODO: implement my turn
+    }
+
+    $("#black-card").append(new BlackCard(data.black_card, 1));
+
+    data.cards.forEach((card, ind) => {
       let text = `card-${ind}`;
       let label = document.createElement("label");
       label.setAttribute("for", text);
