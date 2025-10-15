@@ -32,6 +32,11 @@ $(document).ready(() => {
     socket.emit("ready", socket.id);
   });
 
+  $("#confirmButton").on("click", () => {
+    black = $("black-card");
+    console.log(black.whites);
+  });
+
   socket.on("acc_ready", () => {
     $("#readyButton").prop("disabled", true);
     $("#readyButton").hide();
@@ -40,6 +45,8 @@ $(document).ready(() => {
   socket.on("game_stop", () => {
     $("#readyButton").prop("disabled", false);
     $("#readyButton").show();
+    $("#confirmButton").prop("disabled", true);
+    $("#confirmButton").hide();
   });
 
   socket.on("next_round", () => {
