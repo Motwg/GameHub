@@ -2,13 +2,7 @@ class Card extends HTMLElement {
   constructor(text) {
     super();
     this.setAttribute("class", "cah-card");
-    this.addEventListener("click", this.onclick);
     this.innerHTML = text;
-  }
-
-  onclick() {
-    console.log(this);
-    this.select;
   }
 }
 
@@ -21,9 +15,20 @@ class BlackCard extends Card {
 customElements.define("black-card", BlackCard);
 
 class WhiteCard extends Card {
-  constructor(text) {
+  constructor(text, onclick) {
     super(text);
+    if (onclick) {
+      this.addEventListener("click", onclick);
+    }
   }
+
+  // onclick() {
+  //   console.log(this);
+  //   $(this).toggleClass("checked");
+  //   if (this.contains("checked")) {
+  //   } else {
+  //   }
+  // }
 }
 customElements.define("white-card", WhiteCard);
 
@@ -61,23 +66,42 @@ $(document).ready(() => {
       console.log("My turn");
       // TODO: implement my turn
     }
-
-    $("#black-card").append(new BlackCard(data.black_card, 1));
+    let whites = 2;
+    let checkList = [];
+    $("#black-card").append(new BlackCard(data.black_card, whites));
 
     data.cards.forEach((card, ind) => {
-      let text = `card-${ind}`;
-      let label = document.createElement("label");
-      label.setAttribute("for", text);
+      let whiteClick = (event) => {
+        let el = event.target;
+        console.log(el);
+        $(el).toggleClass("checked");
+        if (el.classList.contains("checked")) {
+          checkList.append(el); // replace
+          console.log(checkList);
+        } else {
+          checkList.remove(el); // replace
+          console.log(checkList);
+        }
+      };
+      let white = new WhiteCard(card, whiteClick);
+      white.setAttribute("value", ind);
+      // $(white).click(() => {
+      //   whiteClick($(this.element));
+      // });
+      cards_container.append(white);
 
-      let input = document.createElement("input");
-      input.setAttribute("type", "radio");
-      input.setAttribute("name", "card");
-      input.setAttribute("id", text);
-      // input.setAttribute("value", text);
-      input.setAttribute("class", "visually-hidden");
-      cards_container.append(input);
-      label.append(new WhiteCard(card));
-      cards_container.append(label);
+      // let text = `card-${ind}`;
+      // let label = document.createElement("label");
+      // label.setAttribute("for", text);
+
+      // let input = document.createElement("input");
+      // input.setAttribute("type", "radio");
+      // input.setAttribute("name", "card");
+      // input.setAttribute("id", text);
+      // input.setAttribute("class", "visually-hidden");
+      // cards_container.append(input);
+      // label.append(new WhiteCard(card));
+      // cards_container.append(label);
     });
   });
 });
