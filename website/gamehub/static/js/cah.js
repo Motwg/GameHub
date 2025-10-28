@@ -63,7 +63,9 @@ class CardContainer extends HTMLElement {
           }
         }
       };
-      this.append(new WhiteCard(card, whiteClick));
+      let label = document.createElement("label");
+      label.appendChild(new WhiteCard(card, whiteClick));
+      this.append(label);
     });
   }
 }
