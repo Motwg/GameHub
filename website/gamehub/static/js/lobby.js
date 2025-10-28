@@ -69,8 +69,8 @@ const usernameCurrent = document.getElementById("usernameCurrent");
 // Load user
 if (localStorage.uuid && localStorage.username) {
   username = localStorage.username;
-  // Create UUID for new user
 } else {
+  // Create UUID for new user
   let uuid = uniqueId();
   username = "Player_" + uuid.substring(2, 10);
   localStorage.uuid = uuid;
