@@ -32,17 +32,34 @@ white-card {
     color: black;
 }
 
-input:checked + label > white-card {
-    color: red;
-    outline: 0.4em solid darkseagreen;
+label:has(white-card)::before {
+    content: " ";
+    display: block;
+    border-radius: 50%;
+    position: absolute;
+    top: -25px;
+    left: -25px;
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    line-height: 43px;
+    font-size: 35px;
+    transition-duration: 0.4s;
+    transform: scale(0);
 }
 
-.visually-hidden {
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
+label:has(white-card) {
+    transition-duration: 0.2s;
+    transform-origin: 50% 50%;
+}
+
+label:has(white-card.checked) {
+    transform: scale(0.9);
+    box-shadow: inset 0 0 10px palevioletred;
+}
+
+label:has(white-card.checked)::before {
+    content: "✓";
+    background-color: palevioletred;
+    transform: scale(1);
 }

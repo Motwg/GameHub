@@ -1,3 +1,6 @@
+from collections import deque
+from typing import TYPE_CHECKING
+
 from flask import Response
 from flask_socketio import emit
 
@@ -9,6 +12,9 @@ from website.gamehub.model.room import Room
 from website.gamehub.model.user import User
 
 from .auth import room_access
+
+if TYPE_CHECKING:
+    import uuid
 
 
 @socketio.on('ready')
@@ -23,10 +29,15 @@ def handle_ready(user: User, room: Room, sid: str) -> Response:
     return Response(status=200)
 
 
-@socketio.on('my_cards')
+@socketio.on('get_turn_data')
 @room_access
-def my_cards(user: User, _: Room, sid: str) -> Response:
-    emit('my_cards', user.config['cards'], to=sid)
+def get_turn_data(user: User, room: Room, sid: str) -> Response:
+    data = {
+        'cards': user.config['cards'],
+        'black_card': room.config['black_card'],
+        'is_my_turn': room.config['whose_turn'] == (user.user_id, user.username),
+    }
+    emit('get_turn_data', data, to=sid)
     return Response(status=200)
 
 
@@ -39,6 +50,8 @@ def unready_room(room: Room) -> bool:
 def start_cah(room: Room) -> None:
     room.config.update(get_card_generator('PL', 'black'))
     room.config.update(get_card_generator('PL', 'white'))
+    room.config['queue'] = deque(room.members)
+    print(room.config)
     if unready_room(room):
         emit('refresh_members', get_members(room), to=room.room_id)
         next_round(room)
@@ -46,6 +59,10 @@ def start_cah(room: Room) -> None:
 
 def next_round(room: Room) -> None:
     give_cards(room)
+    whose_turn: tuple[uuid.UUID, str] = room.config['queue'].popleft()
+    room.config['whose_turn'] = whose_turn
+    room.config['queue'].append(whose_turn)
+    room.config['black_card'] = next(room.config['black'])
     emit('next_round', to=room.room_id)
 
 

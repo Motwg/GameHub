@@ -1,8 +1,8 @@
 import random
+from collections.abc import Generator
 from itertools import groupby
 from pathlib import Path
-from string import printable
-from typing import Any, Generator, Literal, Never
+from typing import Any, Literal, Never
 
 import pandas as pd
 
