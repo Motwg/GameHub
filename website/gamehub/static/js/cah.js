@@ -32,6 +32,43 @@ class WhiteCard extends Card {
 }
 customElements.define("white-card", WhiteCard);
 
+class CardContainer extends HTMLElement {
+  constructor() {
+    super();
+    this.setAttribute("class", "card-container");
+    this.checked = [];
+    this.whites = 0;
+  }
+  log() {
+    alert("log");
+  }
+  changeCards(cards, limit) {
+    this.textContent = "";
+    this.checked.length = 0;
+
+    cards.forEach((card, ind) => {
+      let whiteClick = (event) => {
+        let t = event.target;
+        console.log("Clicked " + t);
+
+        if (t.classList.contains("checked")) {
+          t.classList.remove("checked");
+          this.checked.splice(this.checked.indexOf(ind), 1);
+          console.log("Removing... \n" + this.checked);
+        } else {
+          if (this.checked.length < limit) {
+            t.classList.add("checked");
+            this.checked.push(ind);
+            console.log("Pushing... \n" + this.checked);
+          }
+        }
+      };
+      this.append(new WhiteCard(card, whiteClick));
+    });
+  }
+}
+customElements.define("card-container", CardContainer);
+
 $(document).ready(() => {
   $("#readyButton").on("click", () => {
     socket.emit("ready", socket.id);
@@ -61,47 +98,31 @@ $(document).ready(() => {
   });
 
   socket.on("get_turn_data", (data) => {
-    cards_container = $("#cards");
     if (data.is_my_turn) {
       console.log("My turn");
       // TODO: implement my turn
     }
     let whites = 2;
-    let checkList = [];
     $("#black-card").append(new BlackCard(data.black_card, whites));
+    let myCards = document.querySelector("card-container");
+    myCards.changeCards(data.cards, whites);
 
-    data.cards.forEach((card, ind) => {
-      let whiteClick = (event) => {
-        let el = event.target;
-        console.log(el);
-        $(el).toggleClass("checked");
-        if (el.classList.contains("checked")) {
-          checkList.append(el); // replace
-          console.log(checkList);
-        } else {
-          checkList.remove(el); // replace
-          console.log(checkList);
-        }
-      };
-      let white = new WhiteCard(card, whiteClick);
-      white.setAttribute("value", ind);
-      // $(white).click(() => {
-      //   whiteClick($(this.element));
-      // });
-      cards_container.append(white);
-
-      // let text = `card-${ind}`;
-      // let label = document.createElement("label");
-      // label.setAttribute("for", text);
-
-      // let input = document.createElement("input");
-      // input.setAttribute("type", "radio");
-      // input.setAttribute("name", "card");
-      // input.setAttribute("id", text);
-      // input.setAttribute("class", "visually-hidden");
-      // cards_container.append(input);
-      // label.append(new WhiteCard(card));
-      // cards_container.append(label);
-    });
+    // data.cards.forEach((card, ind) => {
+    //   let whiteClick = (event) => {
+    //     let el = event.target;
+    //     console.log(el);
+    //     $(el).toggleClass("checked");
+    //     if (el.classList.contains("checked")) {
+    //       checkList.push(el); // replace
+    //       console.log(checkList);
+    //     } else {
+    //       checkList.remove(el); // replace
+    //       console.log(checkList);
+    //     }
+    //   };
+    //   let white = new WhiteCard(card, whiteClick);
+    //   white.setAttribute("value", ind);
+    // cards_container.append(white);
+    // });
   });
 });
