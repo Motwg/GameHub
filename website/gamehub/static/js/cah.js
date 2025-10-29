@@ -31,9 +31,14 @@ class CardContainer extends HTMLElement {
     this.checked = [];
   }
 
+  dim() {
+    this.classList.add("dimmed");
+  }
+
   changeCards(cards, limit) {
     this.textContent = "";
     this.checked.length = 0;
+    this.classList.remove("dimmed");
 
     cards.forEach((card, ind) => {
       let whiteClick = (event) => {
@@ -93,13 +98,12 @@ $(document).ready(() => {
     $("#black-card").append(new BlackCard(data.black_card, data.gaps));
     let myCards = document.querySelector("card-container");
     myCards.changeCards(data.cards, data.gaps);
-    
+
     if (data.is_my_turn) {
       console.log("My turn to be master");
+      // myCards.dim();
       // TODO: implement my turn
     } else {
     }
-
-
   });
 });

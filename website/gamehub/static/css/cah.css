@@ -12,10 +12,7 @@
 
 .card-container {
     display: flex;
-}
-
-.card-container:focus-within {
-    outline: 0.2em solid blue;
+    justify-content: center;
 }
 
 black-card {
@@ -62,4 +59,24 @@ label:has(white-card.checked)::before {
     content: "✓";
     background-color: palevioletred;
     transform: scale(1);
+}
+
+.dimmed {
+    position: relative;
+}
+
+.dimmed:before {
+    content: "You are the master now!";
+    font-weight: bold;
+    font-size: 15pt;
+    color: #fff;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10;
+    display: flex;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
 }
