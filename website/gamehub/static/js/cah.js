@@ -7,9 +7,9 @@ class Card extends HTMLElement {
 }
 
 class BlackCard extends Card {
-  constructor(text, whites) {
+  constructor(text, gaps) {
     super(text);
-    this.whites = whites;
+    this.gaps = gaps;
   }
 }
 customElements.define("black-card", BlackCard);
@@ -21,14 +21,6 @@ class WhiteCard extends Card {
       this.addEventListener("click", onclick);
     }
   }
-
-  // onclick() {
-  //   console.log(this);
-  //   $(this).toggleClass("checked");
-  //   if (this.contains("checked")) {
-  //   } else {
-  //   }
-  // }
 }
 customElements.define("white-card", WhiteCard);
 
@@ -37,11 +29,8 @@ class CardContainer extends HTMLElement {
     super();
     this.setAttribute("class", "card-container");
     this.checked = [];
-    this.whites = 0;
   }
-  log() {
-    alert("log");
-  }
+
   changeCards(cards, limit) {
     this.textContent = "";
     this.checked.length = 0;
@@ -79,6 +68,7 @@ $(document).ready(() => {
   $("#confirmButton").on("click", () => {
     black = $("black-card");
     console.log(black.whites);
+    // TODO: implement
   });
 
   socket.on("acc_ready", () => {
@@ -100,31 +90,16 @@ $(document).ready(() => {
   });
 
   socket.on("get_turn_data", (data) => {
-    if (data.is_my_turn) {
-      console.log("My turn");
-      // TODO: implement my turn
-    }
-    let whites = 2;
-    $("#black-card").append(new BlackCard(data.black_card, whites));
+    $("#black-card").append(new BlackCard(data.black_card, data.gaps));
     let myCards = document.querySelector("card-container");
-    myCards.changeCards(data.cards, whites);
+    myCards.changeCards(data.cards, data.gaps);
+    
+    if (data.is_my_turn) {
+      console.log("My turn to be master");
+      // TODO: implement my turn
+    } else {
+    }
 
-    // data.cards.forEach((card, ind) => {
-    //   let whiteClick = (event) => {
-    //     let el = event.target;
-    //     console.log(el);
-    //     $(el).toggleClass("checked");
-    //     if (el.classList.contains("checked")) {
-    //       checkList.push(el); // replace
-    //       console.log(checkList);
-    //     } else {
-    //       checkList.remove(el); // replace
-    //       console.log(checkList);
-    //     }
-    //   };
-    //   let white = new WhiteCard(card, whiteClick);
-    //   white.setAttribute("value", ind);
-    // cards_container.append(white);
-    // });
+
   });
 });

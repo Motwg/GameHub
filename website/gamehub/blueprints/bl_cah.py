@@ -35,6 +35,7 @@ def get_turn_data(user: User, room: Room, sid: str) -> Response:
     data = {
         'cards': user.config['cards'],
         'black_card': room.config['black_card'],
+        'gaps': room.config['gaps'],
         'is_my_turn': room.config['whose_turn'] == (user.user_id, user.username),
     }
     emit('get_turn_data', data, to=sid)
@@ -62,7 +63,11 @@ def next_round(room: Room) -> None:
     whose_turn: tuple[uuid.UUID, str] = room.config['queue'].popleft()
     room.config['whose_turn'] = whose_turn
     room.config['queue'].append(whose_turn)
-    room.config['black_card'] = next(room.config['black'])
+
+    black_card: str = next(room.config['black'])
+    gaps: int = black_card.count('______')
+    room.config['black_card'] = black_card
+    room.config['gaps'] = gaps if gaps > 0 else 1
     emit('next_round', to=room.room_id)
 
 
