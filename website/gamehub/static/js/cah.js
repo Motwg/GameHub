@@ -27,7 +27,6 @@ customElements.define("white-card", WhiteCard);
 class CardContainer extends HTMLElement {
   constructor() {
     super();
-    this.setAttribute("class", "card-container");
     this.checked = [];
   }
 
@@ -43,17 +42,14 @@ class CardContainer extends HTMLElement {
     cards.forEach((card, ind) => {
       let whiteClick = (event) => {
         let t = event.target;
-        console.log("Clicked " + t);
 
         if (t.classList.contains("checked")) {
           t.classList.remove("checked");
           this.checked.splice(this.checked.indexOf(ind), 1);
-          console.log("Removing... \n" + this.checked);
         } else {
           if (this.checked.length < limit) {
             t.classList.add("checked");
             this.checked.push(ind);
-            console.log("Pushing... \n" + this.checked);
           }
         }
       };
@@ -65,45 +61,108 @@ class CardContainer extends HTMLElement {
 }
 customElements.define("card-container", CardContainer);
 
+class CardCarousel extends HTMLElement {
+  constructor() {
+    super();
+    this.cards = [];
+    this.page = 0;
+    this.container = document.createElement("div");
+
+    const prev = document.createElement("button");
+    prev.innerText = "←";
+    prev.setAttribute("class", "btn btn-primary");
+    prev.addEventListener("click", () => {
+      this.previousPage();
+    });
+
+    const next = document.createElement("button");
+    next.innerText = "→";
+    next.setAttribute("class", "btn btn-primary");
+    next.addEventListener("click", () => {
+      this.nextPage();
+    });
+    this.append(prev);
+    this.append(this.container);
+    this.append(next);
+  }
+
+  showPage(number) {
+    this.container.textContent = "";
+    this.page = number;
+    this.cards[number % this.cards.length].forEach((card) => {
+      this.container.append(new WhiteCard(card));
+    });
+  }
+
+  setCards(cards) {
+    this.cards = cards;
+    this.page = 0;
+    this.showPage(0);
+  }
+
+  nextPage() {
+    this.showPage(this.page + 1);
+  }
+
+  previousPage() {
+    this.showPage(this.page - 1);
+  }
+}
+customElements.define("card-carousel", CardCarousel);
+
 $(document).ready(() => {
+  let myCards = document.querySelector("card-container");
+  let carousel = document.querySelector("card-carousel");
+  let black_card;
+
+  $("#confirmButton").prop("disabled", true);
+  $("#confirmButton").hide();
+
   $("#readyButton").on("click", () => {
     socket.emit("ready", socket.id);
   });
 
   $("#confirmButton").on("click", () => {
-    black = $("black-card");
-    console.log(black.whites);
-    // TODO: implement
+    socket.emit("confirm_cards", myCards.checked);
   });
 
   socket.on("acc_ready", () => {
     $("#readyButton").prop("disabled", true);
     $("#readyButton").hide();
+    $("#confirmButton").show();
   });
 
   socket.on("game_stop", () => {
     $("#readyButton").prop("disabled", false);
     $("#readyButton").show();
     $("#confirmButton").prop("disabled", true);
-    $("#confirmButton").hide();
   });
 
   socket.on("next_round", () => {
     socket.emit("get_turn_data", socket.id);
-    $("#confirmButton").prop("disabled", false);
-    $("#confirmButton").show();
   });
 
-  socket.on("get_turn_data", (data) => {
-    $("#black-card").append(new BlackCard(data.black_card, data.gaps));
-    let myCards = document.querySelector("card-container");
+  socket.on("send_turn_data", (data) => {
+    black_card = new BlackCard(data.black_card, data.gaps);
+    $("#black-card").append(black_card);
     myCards.changeCards(data.cards, data.gaps);
 
-    if (data.is_my_turn) {
-      console.log("My turn to be master");
-      // myCards.dim();
-      // TODO: implement my turn
+    // TODO: delete mark
+    if (!data.is_my_turn) {
+      $("#confirmButton").prop("disabled", true);
+      // $("#confirmButton").hide();
+      myCards.dim();
     } else {
+      $("#confirmButton").prop("disabled", false);
     }
+  });
+
+  socket.on("cards_confirmed", (cards) => {
+    carousel.setCards(cards);
+  });
+
+  socket.on("chose_winner", (cards) => {
+    console.log("Chosing winner...");
+    // TODO: implement
   });
 });
