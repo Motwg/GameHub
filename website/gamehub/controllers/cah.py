@@ -29,7 +29,7 @@ def get_card_generator(
     return {b_or_w: shuffler(lang_pack)}
 
 
-def shuffler[T](sequence: pd.Series) -> Iterator[str]:
+def shuffler(sequence: pd.Series) -> Iterator[str]:
     seq = list(range(len(sequence)))
     offset: int = len(seq) - 1
     while True:

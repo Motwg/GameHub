@@ -1,10 +1,12 @@
 import random
+import uuid
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from functools import partial
 from string import ascii_uppercase
 from typing import Any, Literal
 
+from website.gamehub.model.room_controllers import RoomController
 from website.gamehub.model.user import User
 
 
@@ -20,10 +22,10 @@ LiteralActivities = Literal['cah', 'chat']
 class Room:
     activity: LiteralActivities
     password: None | str = None
-    members: OrderedDict[tuple[str, str], User] = field(default_factory=OrderedDict)
+    members: OrderedDict[tuple[uuid.UUID, str], User] = field(default_factory=OrderedDict)
     room_id: str = field(default_factory=id_generator, kw_only=True)
     is_dedicated: bool = field(default=False, kw_only=True)
-    config: dict[str, Any] = field(default_factory=dict, init=False)
+    controller: RoomController | None = field(init=False, default=None)
 
     def __getitem__(self, key: str) -> Any:
         return getattr(self, key)
