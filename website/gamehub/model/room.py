@@ -22,6 +22,7 @@ class Room:
     password: None | str = None
     members: OrderedDict[tuple[str, str], User] = field(default_factory=OrderedDict)
     room_id: str = field(default_factory=id_generator, kw_only=True)
+    is_dedicated: bool = field(default=False, kw_only=True)
     config: dict[str, Any] = field(default_factory=dict, init=False)
 
     def __getitem__(self, key: str) -> Any:

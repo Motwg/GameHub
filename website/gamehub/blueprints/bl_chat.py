@@ -44,7 +44,11 @@ def handle_disconnect(user: User, room: Room) -> Response:
     emit('game_stop', to=room.room_id)
     emit('lost_connection', data, to=room.room_id)
     leave_room(room.room_id)
-    _ = delete_room(room.room_id) if not bool(room['members']) else update_room(room)
+    _ = (
+        delete_room(room.room_id)
+        if not bool(room['members']) and not room.is_dedicated
+        else update_room(room)
+    )
     return Response(status=200)
 
 

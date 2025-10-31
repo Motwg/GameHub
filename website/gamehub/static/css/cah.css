@@ -4,15 +4,25 @@
     cursor: pointer;
     display: block;
 
-    width: 140px;
-    height: 225px;
-    padding: 6px;
-    margin: 5px;
+    width: 180px;
+    height: 280px;
+    padding: 12px;
+    margin: 10px;
 }
 
 .card-container {
     display: flex;
     justify-content: center;
+}
+
+.card-container > .btn {
+    margin: 5px;
+    align-self: center;
+}
+
+.upper-row {
+    display: flex;
+    justify-content: space-between;
 }
 
 black-card {

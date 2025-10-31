@@ -67,6 +67,7 @@ class CardCarousel extends HTMLElement {
     this.cards = [];
     this.page = 0;
     this.container = document.createElement("div");
+    this.container.setAttribute("class", "card-container");
 
     const prev = document.createElement("button");
     prev.innerText = "←";

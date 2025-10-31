@@ -11,15 +11,29 @@ tr.down {
     background-image: linear-gradient(12deg, white, white, #ff6666);
 }
 
-.extra>:not(caption)>*>* {
+.extra > :not(caption) > * > * {
     background-color: transparent;
 }
 
 tr.critical {
-    background-image: linear-gradient(180deg, white, #ff0d0d, #ff0d0d, #ff0d0d, white);
+    background-image: linear-gradient(
+        180deg,
+        white,
+        #ff0d0d,
+        #ff0d0d,
+        #ff0d0d,
+        white
+    );
 }
 tr.warning {
-    background-image: linear-gradient(180deg, white, #e6bd57, #e6bd57, #e6bd57, white);
+    background-image: linear-gradient(
+        180deg,
+        white,
+        #e6bd57,
+        #e6bd57,
+        #e6bd57,
+        white
+    );
 }
 
 td.cell-up {
@@ -49,7 +63,12 @@ select.choose-interval {
 }
 
 .navbar {
-    background: linear-gradient(90deg, #fd7e14 0%, #fd7e14 60%, rgba(255, 255, 255, 0.5) 100%);
+    background: linear-gradient(
+        90deg,
+        #fd7e14 0%,
+        #fd7e14 60%,
+        rgba(255, 255, 255, 0.5) 100%
+    );
 }
 
 .navbar-collapse {
@@ -62,35 +81,40 @@ li.nav-item {
 }
 
 .boxes {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
 }
 
 .rows {
-  display: flex;
-  width: 100%;
-  height: 15px;
-  gap: 15px;
-  flex-direction: row;
-  justify-content: right;
+    display: flex;
+    width: 100%;
+    height: 15px;
+    gap: 15px;
+    flex-direction: row;
+    justify-content: right;
 }
 
 .h-rows {
-  display: flex;
-  width: 100%;
-  height: 35px;
-  gap: 15px;
-  flex-direction: row;
-  justify-content: right;
+    display: flex;
+    width: 100%;
+    height: 35px;
+    gap: 15px;
+    flex-direction: row;
+    justify-content: right;
 }
 
 .box {
-  height: 26px;
+    height: 26px;
 }
 
 .arrow-details:hover {
-    filter: invert(35%) sepia(0%) saturate(1933%) hue-rotate(148deg) brightness(91%) contrast(80%);
+    filter: invert(35%) sepia(0%) saturate(1933%) hue-rotate(148deg)
+        brightness(91%) contrast(80%);
     cursor: pointer;
+}
+
+.btn {
+    margin: 10px;
 }

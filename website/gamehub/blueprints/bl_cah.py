@@ -1,5 +1,5 @@
 from collections import deque
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from flask import Response
 from flask_socketio import emit
@@ -78,6 +78,7 @@ def init_cah(room: Room) -> None:
     room.config.update(get_card_generator('PL', 'black'))
     room.config.update(get_card_generator('PL', 'white'))
     room.config['queue'] = deque(room.members)
+    room.config['status'] = 'start'
 
 
 def prepare_next_round(room: Room) -> None:
