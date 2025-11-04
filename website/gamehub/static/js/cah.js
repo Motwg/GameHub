@@ -30,14 +30,26 @@ class CardContainer extends HTMLElement {
     this.checked = [];
   }
 
-  dim() {
-    this.classList.add("dimmed");
+  dimMaster() {
+    this.classList.add("dimmed-master");
+  }
+
+  dimConfirm() {
+    this.classList.add("dimmed-confirm");
+  }
+
+  uncheck() {
+    this.checked.length = 0;
+    this.childNodes.forEach((card) => {
+      card.classList.remove("checked");
+    });
   }
 
   changeCards(cards, limit) {
     this.textContent = "";
     this.checked.length = 0;
-    this.classList.remove("dimmed");
+    this.classList.remove("dimmed-master");
+    this.classList.remove("dimmed-confirm");
 
     cards.forEach((card, ind) => {
       let whiteClick = (event) => {
@@ -89,8 +101,8 @@ class CardCarousel extends HTMLElement {
 
   showPage(number) {
     this.container.textContent = "";
-    this.page = number;
-    this.cards[number % this.cards.length].forEach((card) => {
+    this.page = number % this.cards.length;
+    this.cards[this.page].forEach((card) => {
       this.container.append(new WhiteCard(card));
     });
   }
@@ -112,9 +124,8 @@ class CardCarousel extends HTMLElement {
 customElements.define("card-carousel", CardCarousel);
 
 $(document).ready(() => {
-  let myCards = document.querySelector("card-container");
-  let carousel = document.querySelector("card-carousel");
-  let black_card;
+  const myCards = document.querySelector("card-container");
+  const carousel = document.querySelector("card-carousel");
 
   $("#confirmButton").prop("disabled", true);
   $("#confirmButton").hide();
@@ -124,7 +135,14 @@ $(document).ready(() => {
   });
 
   $("#confirmButton").on("click", () => {
-    socket.emit("confirm_cards", myCards.checked);
+    if (myCards.checked.length == blackCardContainer.firstChild.gaps) {
+      myCards.dimConfirm();
+      socket.emit("confirm_cards", myCards.checked);
+    }
+  });
+
+  $("#confirmWinner").on("click", () => {
+    socket.emit("winner_chosen", carousel.cards[carousel.page]);
   });
 
   socket.on("acc_ready", () => {
@@ -139,20 +157,22 @@ $(document).ready(() => {
     $("#confirmButton").prop("disabled", true);
   });
 
+  const blackCardContainer = document.querySelector("#black-card");
   socket.on("next_round", () => {
+    blackCardContainer.innerHTML = "";
+    myCards.uncheck();
     socket.emit("get_turn_data", socket.id);
   });
 
   socket.on("send_turn_data", (data) => {
-    black_card = new BlackCard(data.black_card, data.gaps);
-    $("#black-card").append(black_card);
+    blackCardContainer.appendChild(new BlackCard(data.black_card, data.gaps));
     myCards.changeCards(data.cards, data.gaps);
 
     // TODO: delete mark
     if (!data.is_my_turn) {
       $("#confirmButton").prop("disabled", true);
       // $("#confirmButton").hide();
-      myCards.dim();
+      myCards.dimMaster();
     } else {
       $("#confirmButton").prop("disabled", false);
     }

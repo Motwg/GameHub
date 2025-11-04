@@ -51,9 +51,11 @@
             {% include "essentials/incl_navbar.html" %}
         </header>
 
-        <main class="flex-shrink-0">
+        <main>
             <!-- Start Main content -->
-            <div class="container">{% block contents %} {% endblock %}</div>
+            <div class="main container">
+                {% block contents %} {% endblock %}
+            </div>
             <!-- End Main content -->
         </main>
 

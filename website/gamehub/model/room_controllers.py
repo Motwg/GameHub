@@ -6,7 +6,12 @@ from dataclasses import dataclass, field
 
 @dataclass(slots=True)
 class RoomController:
-    status: str
+    status: str = field(init=False, default='init')
+
+
+@dataclass(slots=True)
+class ChatController(RoomController):
+    pass
 
 
 @dataclass(slots=True)
@@ -46,6 +51,12 @@ class CahController(RoomController):
         gaps = black_card.count('______')
         self.black_card = black_card
         self.gaps = gaps if gaps > 0 else 1
+        self.status = 'start_new_round'
 
-    def end_round(self) -> None:
-        pass
+    def _remove_cards(self, cards_to_remove: dict[tuple[uuid.UUID, str], list[str]]) -> None:
+        for m, cards in self.cards.items():
+            for to_remove in cards_to_remove.get(m, []):
+                cards.remove(to_remove)
+
+    def end_round(self, cards_to_remove: dict[tuple[uuid.UUID, str], list[str]]) -> None:
+        self._remove_cards(cards_to_remove)

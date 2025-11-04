@@ -11,35 +11,23 @@
 <div class="sidebar">
     <nav class="nav flex-column">
         <a class="nav-link" href="#">
-            <div class="header">
-                <span class="icon">
-                    <i class="bi bi-grid">&#xF3FC</i>
-                </span>
-                <span class="description">Chat</span>
+            <div class="form-outline">
+                <textarea
+                    class="form-control"
+                    id="messages"
+                    rows="6"
+                    readonly
+                ></textarea>
             </div>
-            <div class="content">
-                <div class="form-outline w-50">
-                    <textarea
-                        class="form-control"
-                        id="messages"
-                        rows="6"
-                        readonly
-                    ></textarea>
-                </div>
-                <input type="text" id="message" placeholder="Message"/>
+            <div>
+                <input type="text" id="message" placeholder="Message" />
                 <button class="btn btn-primary" id="sendMsgButton">Send</button>
             </div>
         </a>
         <a class="nav-link" href="#">
-            <span class="icon">
-                <i class="bi bi-grid">&#xF3FC</i>
-            </span>
-            <span class="description">Members</span>
             <ul class="list-group" id="members"></ul>
         </a>
     </nav>
-
-
 </div>
 <script src="{{url_for('static',filename='js/chat.js')}}"></script>
 {% endblock %}

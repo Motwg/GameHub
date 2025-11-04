@@ -1,12 +1,13 @@
 import random
 import uuid
-from collections import OrderedDict
+from collections import OrderedDict, deque
 from dataclasses import dataclass, field
 from functools import partial
 from string import ascii_uppercase
 from typing import Any, Literal
 
-from website.gamehub.model.room_controllers import RoomController
+from website.gamehub.controllers.cah import get_card_generator
+from website.gamehub.model.room_controllers import CahController, ChatController, RoomController
 from website.gamehub.model.user import User
 
 
@@ -35,3 +36,14 @@ class Room:
 
     def new_id(self) -> None:
         self.room_id = id_generator()
+
+    def init_controller(self, *args, **kwargs) -> None:
+        match self.activity:
+            case 'chat':
+                self.controller = ChatController()
+            case 'cah':
+                self.controller = CahController(
+                    deque(self.members),
+                    get_card_generator('PL', 'black')['black'],
+                    get_card_generator('PL', 'white')['white'],
+                )

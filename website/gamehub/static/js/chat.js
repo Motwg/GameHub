@@ -1,15 +1,15 @@
 $(document).ready(() => {
-  let textarea = $("#messages");
-  let sendMessage = (msg) => {
+  const textarea = $("#messages");
+  const sendMessage = (msg) => {
     textarea.append(msg + "\n");
     textarea.scrollTop(textarea[0].scrollHeight);
   };
 
-  let memberList = $("#members");
-  let addMember = (m) => {
+  const memberList = $("#members");
+  const addMember = (m) => {
     console.log(m);
-    let li = document.createElement("li");
-    let span = document.createElement("span");
+    const li = document.createElement("li");
+    const span = document.createElement("span");
     li.innerHTML = m.username;
     li.setAttribute(
       "class",
@@ -21,7 +21,7 @@ $(document).ready(() => {
     memberList.append(li);
   };
 
-  let refreshMembers = (members) => {
+  const refreshMembers = (members) => {
     memberList.empty();
     members.forEach((member) => {
       addMember(member);

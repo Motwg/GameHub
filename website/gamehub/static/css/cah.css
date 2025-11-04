@@ -1,6 +1,9 @@
 .cah-card {
     border-style: outset;
     border-radius: 10% 25%;
+    border-width: 5px;
+    border-color: black;
+
     cursor: pointer;
     display: block;
 
@@ -8,6 +11,8 @@
     height: 280px;
     padding: 12px;
     margin: 10px;
+
+    font-size: 18px;
 }
 
 .card-container {
@@ -23,6 +28,11 @@
 .upper-row {
     display: flex;
     justify-content: space-between;
+}
+
+.upper-row > .btn {
+    margin: 5px;
+    align-self: center;
 }
 
 black-card {
@@ -71,11 +81,12 @@ label:has(white-card.checked)::before {
     transform: scale(1);
 }
 
-.dimmed {
+.dimmed-confirm,
+.dimmed-master {
     position: relative;
 }
 
-.dimmed:before {
+.dimmed-master:before {
     content: "You are the master now!";
     font-weight: bold;
     font-size: 15pt;
@@ -89,4 +100,29 @@ label:has(white-card.checked)::before {
     height: 100%;
     width: 100%;
     background: rgba(0, 0, 0, 0.5);
+}
+
+.dimmed-confirm:before {
+    content: "Your cards are confirmed!";
+    font-weight: bold;
+    font-size: 15pt;
+    color: #fff;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10;
+    display: flex;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-right: calc(100% - 450px);
+    justify-content: center;
+    padding: 20px;
 }
