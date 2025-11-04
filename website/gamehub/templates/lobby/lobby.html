@@ -1,14 +1,6 @@
 {% extends "base.html" %} {% block metatags %}
 <meta name="description" content="Main Panel" />
 {% endblock %} {% block scripts %}
-<!-- socket.io -->
-<script src="{{url_for('static', filename='external/js/socket.io.min.js')}}"></script>
-<!-- css -->
-<link
-    href="{{ url_for('static', filename='css/cah.css') }}"
-    type="text/css"
-    rel="stylesheet"
-/>
 <script>
     const loginUrl = "{{ url_for('auth.login') }}";
     const roomUrl = "{{ url_for('bl_lobby.create_room') }}";

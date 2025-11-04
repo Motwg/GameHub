@@ -17,7 +17,7 @@ def create_app(mode: Literal['test', 'prod'] = 'prod') -> Flask:
         _ = app.config.from_file('../test-config.json', load=json.load)
 
     socketio.init_app(app, cors_allowed_origins='*')
-    from .blueprints import bl_cah, bl_chat
+    from .blueprints import bl_activity, bl_chat, bl_cah
 
     with app.app_context():
         # Add Blueprints

@@ -1,7 +1,7 @@
 import os
 from collections.abc import Callable
 from functools import wraps
-from typing import Concatenate, ParamSpec
+from typing import Concatenate, ParamSpec, TypeVar
 
 from flask import (
     Blueprint,
@@ -25,6 +25,7 @@ from website.gamehub.validators.auth import validate_username
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 P = ParamSpec('P')
+T = TypeVar('T')
 
 
 # IMPORTANT! Called for every request
@@ -85,7 +86,7 @@ def room_access(
         try:
             room = get_room(session['room'])
             if room:
-                r_user = room.members[(str(user.user_id), user.username)]
+                r_user = room.members[(user.user_id, user.username)]
                 return view(r_user, room, *args, **kwargs)
         except KeyError:
             flash('miss_room')
@@ -93,6 +94,26 @@ def room_access(
         return abort(404)
 
     return access_view
+
+
+def in_game(
+    room_controller: type[T],
+) -> Callable[[Callable[Concatenate[User, Room, T, P], ResponseValue]], Callable[P, ResponseValue]]:
+    def inner(
+        view: Callable[Concatenate[User, Room, T, P], ResponseValue],
+    ) -> Callable[P, ResponseValue]:
+        @wraps(view)
+        @room_access
+        def access_view(user: User, room: Room, *args: P.args, **kwargs: P.kwargs) -> ResponseValue:
+            controller = room.controller
+            if isinstance(controller, room_controller):
+                return view(user, room, controller, *args, **kwargs)
+            flash('miss_room')
+            return redirect(url_for('bl_lobby.lobby'), 302)
+
+        return access_view
+
+    return inner
 
 
 @bp.route('/login', methods=('POST',))

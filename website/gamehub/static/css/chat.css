@@ -1,0 +1,40 @@
+.sidebar {
+    position: fixed;
+    top: 68px;
+    right: 0;
+    height: 100%;
+    width: 400px;
+    padding-top: 0px;
+    background-color: rgb(255, 191, 121);
+    box-shadow: #fff;
+    transition: width 0.3s;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 20px;
+    color: black;
+}
+
+.sidebar .nav-link:hover {
+    background-color: skyblue;
+}
+
+a div:has(#message) {
+    display: flex;
+    align-items: center;
+}
+
+.form-outline:has(#messages) {
+    width: 100%;
+}
+
+.list-group {
+    width: 100%;
+}
+
+#message {
+    width: 280px;
+}

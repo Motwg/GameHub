@@ -55,6 +55,7 @@ let changeUsername = () => {
     xhr.onload = () => {
       if (xhr.readyState == 4 && xhr.status == 200) {
         localStorage.username = username;
+        usernameCurrent.innerText = username;
         console.log("Username changed to " + username);
       } else {
         console.log("Error: " + xhr.status);
@@ -78,5 +79,4 @@ if (localStorage.uuid && localStorage.username) {
 }
 
 usernameInput.value = username;
-usernameCurrent.innerText = username;
 changeUsername();

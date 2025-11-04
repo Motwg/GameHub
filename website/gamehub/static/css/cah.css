@@ -1,21 +1,38 @@
 .cah-card {
     border-style: outset;
     border-radius: 10% 25%;
+    border-width: 5px;
+    border-color: black;
+
     cursor: pointer;
     display: block;
 
-    width: 140px;
-    height: 225px;
-    padding: 6px;
-    margin: 5px;
+    width: 180px;
+    height: 280px;
+    padding: 12px;
+    margin: 10px;
+
+    font-size: 18px;
 }
 
 .card-container {
     display: flex;
+    justify-content: center;
 }
 
-.card-container:focus-within {
-    outline: 0.2em solid blue;
+.card-container > .btn {
+    margin: 5px;
+    align-self: center;
+}
+
+.upper-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.upper-row > .btn {
+    margin: 5px;
+    align-self: center;
 }
 
 black-card {
@@ -62,4 +79,50 @@ label:has(white-card.checked)::before {
     content: "✓";
     background-color: palevioletred;
     transform: scale(1);
+}
+
+.dimmed-confirm,
+.dimmed-master {
+    position: relative;
+}
+
+.dimmed-master:before {
+    content: "You are the master now!";
+    font-weight: bold;
+    font-size: 15pt;
+    color: #fff;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10;
+    display: flex;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dimmed-confirm:before {
+    content: "Your cards are confirmed!";
+    font-weight: bold;
+    font-size: 15pt;
+    color: #fff;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10;
+    display: flex;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-right: calc(100% - 450px);
+    justify-content: center;
+    padding: 20px;
 }

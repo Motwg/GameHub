@@ -7,9 +7,9 @@ class Card extends HTMLElement {
 }
 
 class BlackCard extends Card {
-  constructor(text, whites) {
+  constructor(text, gaps) {
     super(text);
-    this.whites = whites;
+    this.gaps = gaps;
   }
 }
 customElements.define("black-card", BlackCard);
@@ -21,45 +21,47 @@ class WhiteCard extends Card {
       this.addEventListener("click", onclick);
     }
   }
-
-  // onclick() {
-  //   console.log(this);
-  //   $(this).toggleClass("checked");
-  //   if (this.contains("checked")) {
-  //   } else {
-  //   }
-  // }
 }
 customElements.define("white-card", WhiteCard);
 
 class CardContainer extends HTMLElement {
   constructor() {
     super();
-    this.setAttribute("class", "card-container");
     this.checked = [];
-    this.whites = 0;
   }
-  log() {
-    alert("log");
+
+  dimMaster() {
+    this.classList.add("dimmed-master");
   }
+
+  dimConfirm() {
+    this.classList.add("dimmed-confirm");
+  }
+
+  uncheck() {
+    this.checked.length = 0;
+    this.childNodes.forEach((card) => {
+      card.classList.remove("checked");
+    });
+  }
+
   changeCards(cards, limit) {
     this.textContent = "";
     this.checked.length = 0;
+    this.classList.remove("dimmed-master");
+    this.classList.remove("dimmed-confirm");
 
     cards.forEach((card, ind) => {
       let whiteClick = (event) => {
         let t = event.target;
-        console.log("Clicked " + t);
 
         if (t.classList.contains("checked")) {
           t.classList.remove("checked");
           this.checked.splice(this.checked.indexOf(ind), 1);
-          console.log("Removing... \n" + this.checked);
         } else {
           if (this.checked.length < limit) {
             t.classList.add("checked");
             this.checked.push(ind);
-            console.log("Pushing... \n" + this.checked);
           }
         }
       };
@@ -71,60 +73,117 @@ class CardContainer extends HTMLElement {
 }
 customElements.define("card-container", CardContainer);
 
+class CardCarousel extends HTMLElement {
+  constructor() {
+    super();
+    this.cards = [];
+    this.page = 0;
+    this.container = document.createElement("div");
+    this.container.setAttribute("class", "card-container");
+
+    const prev = document.createElement("button");
+    prev.innerText = "←";
+    prev.setAttribute("class", "btn btn-primary");
+    prev.addEventListener("click", () => {
+      this.previousPage();
+    });
+
+    const next = document.createElement("button");
+    next.innerText = "→";
+    next.setAttribute("class", "btn btn-primary");
+    next.addEventListener("click", () => {
+      this.nextPage();
+    });
+    this.append(prev);
+    this.append(this.container);
+    this.append(next);
+  }
+
+  showPage(number) {
+    this.container.textContent = "";
+    this.page = number % this.cards.length;
+    this.cards[this.page].forEach((card) => {
+      this.container.append(new WhiteCard(card));
+    });
+  }
+
+  setCards(cards) {
+    this.cards = cards;
+    this.page = 0;
+    this.showPage(0);
+  }
+
+  nextPage() {
+    this.showPage(this.page + 1);
+  }
+
+  previousPage() {
+    this.showPage(this.page - 1);
+  }
+}
+customElements.define("card-carousel", CardCarousel);
+
 $(document).ready(() => {
+  const myCards = document.querySelector("card-container");
+  const carousel = document.querySelector("card-carousel");
+
+  $("#confirmButton").prop("disabled", true);
+  $("#confirmButton").hide();
+
   $("#readyButton").on("click", () => {
     socket.emit("ready", socket.id);
   });
 
   $("#confirmButton").on("click", () => {
-    black = $("black-card");
-    console.log(black.whites);
+    if (myCards.checked.length == blackCardContainer.firstChild.gaps) {
+      myCards.dimConfirm();
+      socket.emit("confirm_cards", myCards.checked);
+    }
+  });
+
+  $("#confirmWinner").on("click", () => {
+    socket.emit("winner_chosen", carousel.cards[carousel.page]);
   });
 
   socket.on("acc_ready", () => {
     $("#readyButton").prop("disabled", true);
     $("#readyButton").hide();
+    $("#confirmButton").show();
   });
 
   socket.on("game_stop", () => {
     $("#readyButton").prop("disabled", false);
     $("#readyButton").show();
     $("#confirmButton").prop("disabled", true);
-    $("#confirmButton").hide();
   });
 
+  const blackCardContainer = document.querySelector("#black-card");
   socket.on("next_round", () => {
+    blackCardContainer.innerHTML = "";
+    myCards.uncheck();
     socket.emit("get_turn_data", socket.id);
-    $("#confirmButton").prop("disabled", false);
-    $("#confirmButton").show();
   });
 
-  socket.on("get_turn_data", (data) => {
-    if (data.is_my_turn) {
-      console.log("My turn");
-      // TODO: implement my turn
-    }
-    let whites = 2;
-    $("#black-card").append(new BlackCard(data.black_card, whites));
-    let myCards = document.querySelector("card-container");
-    myCards.changeCards(data.cards, whites);
+  socket.on("send_turn_data", (data) => {
+    blackCardContainer.appendChild(new BlackCard(data.black_card, data.gaps));
+    myCards.changeCards(data.cards, data.gaps);
 
-    // data.cards.forEach((card, ind) => {
-    //   let whiteClick = (event) => {
-    //     let el = event.target;
-    //     console.log(el);
-    //     $(el).toggleClass("checked");
-    //     if (el.classList.contains("checked")) {
-    //       checkList.push(el); // replace
-    //       console.log(checkList);
-    //     } else {
-    //       checkList.remove(el); // replace
-    //       console.log(checkList);
-    //     }
-    //   };
-    //   let white = new WhiteCard(card, whiteClick);
-    //   white.setAttribute("value", ind);
-    // cards_container.append(white);
-    // });
+    // TODO: delete mark
+    if (!data.is_my_turn) {
+      $("#confirmButton").prop("disabled", true);
+      // $("#confirmButton").hide();
+      myCards.dimMaster();
+    } else {
+      $("#confirmButton").prop("disabled", false);
+    }
+  });
+
+  socket.on("cards_confirmed", (cards) => {
+    carousel.setCards(cards);
+  });
+
+  socket.on("chose_winner", (cards) => {
+    console.log("Chosing winner...");
+    // TODO: implement
   });
 });

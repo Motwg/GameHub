@@ -51,9 +51,9 @@ def join_room(user: User, room_id: str) -> ResponseValue:
     if room.password:
         # TODO: Add handling room psswd
         return abort(404)
-    room.members[(str(user.user_id), user.username)] = user
+    room.members[(user.user_id, user.username)] = user
     if not update_room(room):
-        _ = room.members.pop((str(user.user_id), user.username))
+        _ = room.members.pop((user.user_id, user.username))
         return abort(404)
     session['room'] = room_id
     mc: dict[str, str] = set_menu(f'room {room_id}')
@@ -68,7 +68,7 @@ def create_room(user: User) -> ResponseValue:
         room = Room(
             data.get('activity', 'chat'),
             data.get('password', None),
-            members=OrderedDict({(str(user.user_id), user.username): user}),
+            members=OrderedDict({(user.user_id, user.username): user}),
         )
         if add_room(room):
             session['room'] = room.room_id
