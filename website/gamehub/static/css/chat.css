@@ -19,7 +19,7 @@
 }
 
 .sidebar .nav-link:hover {
-    background-color: skyblue;
+    background-color: whitesmoke;
 }
 
 a div:has(#message) {
