@@ -3,9 +3,10 @@
 <script src="{{url_for('static', filename='external/js/socket.io.min.js')}}"></script>
 <script>
     const hostname = "{{ url_for('bl_lobby.lobby', _external=True) }}".replace(
-        "localhost",
         "127.0.0.1",
+        "localhost",
     );
+    // TO DO: it could be 127.0.0.1 instead of localhost - to check
     const socket = io(hostname);
 </script>
 {% endblock %} {% block contents %} {% endblock %}

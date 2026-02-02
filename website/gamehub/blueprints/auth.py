@@ -80,8 +80,8 @@ def login_required(
 def room_access(
     view: Callable[Concatenate[User, Room, P], ResponseValue],
 ) -> Callable[P, ResponseValue]:
-    @wraps(view)
     @login_required
+    @wraps(view)
     def access_view(user: User, *args: P.args, **kwargs: P.kwargs) -> ResponseValue:
         try:
             room = get_room(session['room'])
@@ -102,8 +102,8 @@ def in_game(
     def inner(
         view: Callable[Concatenate[User, Room, T, P], ResponseValue],
     ) -> Callable[P, ResponseValue]:
-        @wraps(view)
         @room_access
+        @wraps(view)
         def access_view(user: User, room: Room, *args: P.args, **kwargs: P.kwargs) -> ResponseValue:
             controller = room.controller
             if isinstance(controller, room_controller):

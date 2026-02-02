@@ -3,6 +3,7 @@ from typing import Literal
 
 from flask import Flask
 
+# from flask_session import Session
 from .errorhandlers import error_404, error_500
 from .extensions import socketio
 from .jinjafilters import display_error, display_message, slugify
@@ -16,8 +17,14 @@ def create_app(mode: Literal['test', 'prod'] = 'prod') -> Flask:
         app = Flask(__name__, instance_relative_config=False)
         _ = app.config.from_file('../test-config.json', load=json.load)
 
-    socketio.init_app(app, cors_allowed_origins='*')
-    from .blueprints import bl_activity, bl_chat, bl_cah
+    # _ = Session(app)
+    socketio.init_app(
+        app,
+        cors_allowed_origins='*',
+        # manage_session=False,
+    )
+    print(app.config)
+    from .blueprints import bl_activity, bl_cah, bl_chat
 
     with app.app_context():
         # Add Blueprints
