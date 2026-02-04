@@ -23,7 +23,6 @@ def create_app(mode: Literal['test', 'prod'] = 'prod') -> Flask:
         cors_allowed_origins='*',
         # manage_session=False,
     )
-    print(app.config)
     from .blueprints import bl_activity, bl_cah, bl_chat
 
     with app.app_context():
