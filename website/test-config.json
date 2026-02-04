@@ -10,4 +10,6 @@
 
   "CACHE_TYPE": "SimpleCache",
   "CACHE_KEY_PREFIX": "gamehub_"
+
+  // "SESSION_TYPE": "filesystem"
 }
