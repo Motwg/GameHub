@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import Any
+
 from flask import request
 
 
-def convert_datatime(rows: dict[str, Any], field_name: str):
+def convert_datatime(rows: dict[str, Any], field_name: str) -> None:
     if isinstance(rows[field_name], datetime):
         rows[field_name] = rows[field_name].strftime('%d/%m/%Y, %H:%M:%S')
 
@@ -15,7 +16,7 @@ def read_data_from_form() -> dict[Any, Any]:
         if len(record[key]) == 0:
             record[key] = None
         elif record[key] == 'on':
-            # checkbox selected!!!
+            # checkbox selected
             record[key] = True
     # NOTE: if a checkbox is not selected,
     #      it will NOT be part of the record dict!

@@ -37,7 +37,7 @@ class Room:
     def new_id(self) -> None:
         self.room_id = id_generator()
 
-    def init_controller(self, *args, **kwargs) -> None:
+    def init_controller(self) -> None:
         match self.activity:
             case 'chat':
                 self.controller = ChatController()

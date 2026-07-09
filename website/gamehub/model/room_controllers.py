@@ -47,11 +47,10 @@ class CahController(RoomController):
         self._give_cards()
         self._next_master()
 
-        black_card = next(self.black)
-        gaps = black_card.count('______')
-        self.black_card = black_card
+        self.black_card = next(self.black)
+        gaps = self.black_card.count('______')
         self.gaps = gaps if gaps > 0 else 1
-        self.status = 'start_new_round'
+        self.status: str = 'start_new_round'
 
     def _remove_cards(self, cards_to_remove: dict[tuple[uuid.UUID, str], list[str]]) -> None:
         for m, cards in self.cards.items():
