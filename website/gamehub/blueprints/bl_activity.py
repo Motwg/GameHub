@@ -1,6 +1,3 @@
-import dataclasses
-from typing import Any
-
 from flask import Response, session
 from flask_socketio import emit, join_room, leave_room
 
@@ -18,10 +15,10 @@ def handle_ready(user: User, room: Room, sid: str) -> Response:
     user.sid = sid
     if update_room(room):
         emit('acc_ready', to=sid)
-        emit('refresh_members', get_members(room), to=room.room_id)
+        emit('refresh_members', room.get_members(), to=room.room_id)
         if all(m.is_ready for m in room.members.values()) and unready_room(room):
             room.init_controller()
-            emit('refresh_members', get_members(room), to=room.room_id)
+            emit('refresh_members', room.get_members(), to=room.room_id)
             emit('next_round', to=room.room_id)
     return Response(status=200)
 
@@ -32,7 +29,7 @@ def handle_connect(user: User, room: Room) -> Response:
     join_room(room.room_id)
     data = {
         'username': user.username,
-        'members': get_members(room),
+        'members': room.get_members(),
     }
     emit('game_stop', to=room.room_id)
     emit('new_connection', data, to=room.room_id)
@@ -46,7 +43,7 @@ def handle_disconnect(user: User, room: Room) -> Response:
     session.pop('room')
     data = {
         'username': user.username,
-        'members': get_members(room),
+        'members': room.get_members(),
     }
     emit('game_stop', to=room.room_id)
     emit('lost_connection', data, to=room.room_id)
@@ -59,8 +56,8 @@ def handle_disconnect(user: User, room: Room) -> Response:
     return Response(status=200)
 
 
-def get_members(room: Room) -> list[dict[str, Any]]:
-    return [dataclasses.asdict(m) for m in room.members.values()]
+def get_members(room: Room) -> list[User]:
+    return list(room.members.values())
 
 
 def unready_room(room: Room) -> bool:

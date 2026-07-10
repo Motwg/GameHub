@@ -11,7 +11,9 @@
   "CACHE_TYPE": "SimpleCache",
   "CACHE_KEY_PREFIX": "gamehub_",
 
-  "GUNICORN_PROCESSES": 2,
-  "GUNICORN_THREADS": 2,
-  "GUNICORN_BIND": "localhost:8098"
+  "SESSION_TYPE": "filesystem",
+
+  "GUNICORN_PROCESSES": 1,
+  "GUNICORN_THREADS": 1,
+  "GUNICORN_BIND": "0.0.0.0:8099"
 }

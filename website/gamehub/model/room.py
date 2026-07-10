@@ -37,6 +37,9 @@ class Room:
     def new_id(self) -> None:
         self.room_id = id_generator()
 
+    def get_members(self) -> list[User]:
+        return list(self.members.values())
+
     def init_controller(self) -> None:
         match self.activity:
             case 'chat':

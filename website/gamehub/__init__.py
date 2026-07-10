@@ -3,7 +3,9 @@ from typing import Literal
 
 from flask import Flask
 
-# from flask_session import Session
+from flask_session import Session
+from website.gamehub.encoder import CustomJSONProvider
+
 from .errorhandlers import error_404, error_500
 from .extensions import socketio
 from .jinjafilters import display_error, display_message, slugify
@@ -17,12 +19,14 @@ def create_app(mode: Literal['test', 'prod'] = 'prod') -> Flask:
         app = Flask(__name__, instance_relative_config=False)
         _ = app.config.from_file('../test-config.json', load=json.load)
 
-    # _ = Session(app)
+    _ = Session(app)
     socketio.init_app(
         app,
         cors_allowed_origins='*',
-        # manage_session=False,
+        manage_session=False,
+        json=CustomJSONProvider(app),
     )
+    app.json = CustomJSONProvider(app)
     from .blueprints import bl_activity, bl_cah, bl_chat
 
     with app.app_context():

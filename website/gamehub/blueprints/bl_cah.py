@@ -42,8 +42,7 @@ def handle_confirm_cards(
         confirmed_cards = [
             [controller.cards[m][idx] for idx in controller.confirmed_cards.get(m, [])]
             for m in controller.queue
-            # TODO: uncomment
-            # if m != controller.cah_master
+            if m != controller.cah_master
         ]
 
         if all(len(c) == controller.gaps for c in confirmed_cards):
@@ -74,7 +73,7 @@ def handle_winner_chosen(
                 room.members[winner].points += 1
                 controller.end_round(confirmed_cards)
                 controller.prepare_next_round()
-                emit('refresh_members', get_members(room), to=room.room_id)
+                emit('refresh_members', room.get_members(), to=room.room_id)
                 emit('next_round', to=room.room_id)
                 return Response(status=200)
         controller.status = 'awaiting_winner'
