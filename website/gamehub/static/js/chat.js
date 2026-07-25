@@ -21,6 +21,16 @@ $(document).ready(() => {
     memberList.append(li);
   };
 
+  const openNav = () => {
+    document.getElementById("sidebar").style.width = "370px";
+    document.getElementById("main").style.marginRight = "370px";
+  }
+
+  const closeNav = () => {
+    document.getElementById("sidebar").style.width = "0px";
+    document.getElementById("main").style.marginRight = "0px";
+  }
+
   const refreshMembers = (members) => {
     memberList.empty();
     members.forEach((member) => {
@@ -51,8 +61,20 @@ $(document).ready(() => {
     refreshMembers(members);
   });
 
-  $("#sendMsgButton").on("click", () => {
+  // hooks
+  $("#sendMsgButton").click(() => {
     socket.send($("#message").val());
     $("#message").val("");
+  });
+
+  let sidebarActive = true;
+  $("#toggleSidebarBtn").click(() => {
+    if (sidebarActive) {
+      sidebarActive = false;
+      closeNav();
+    } else {
+      sidebarActive = true;
+      openNav();
+    }
   });
 });

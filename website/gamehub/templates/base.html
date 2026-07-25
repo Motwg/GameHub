@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="h-100">
+<html lang="en">
     <head>
         <!-- set the encoding of your site -->
         <meta charset="utf-8" />
@@ -45,15 +45,15 @@
             rel="stylesheet"
         />
     </head>
-    <body class="d-flex flex-column h-100">
-        <header id="pageHeader" class="position-absolute w-100 bg-white">
+    <body>
+        <header id="pageHeader">
             <!-- Navbar -->
             {% include "essentials/incl_navbar.html" %}
         </header>
 
         <main>
             <!-- Start Main content -->
-            <div class="main container">
+            <div class="main d-flex" id="main">
                 {% block contents %} {% endblock %}
             </div>
             <!-- End Main content -->

@@ -1,7 +1,13 @@
 @charset "UTF-8";
 
-main > .container {
-    padding: 80px 10px 0px 10px;
+main > .d-flex {
+    padding: 80px 60px 20px 10px;
+}
+
+#main:has(.sidebar) {
+    margin-right: 370px;
+    margin-left: 0px;
+    transition: margin-right 1s;
 }
 
 tr.up {
@@ -117,4 +123,18 @@ li.nav-item {
 
 .btn {
     margin: 10px;
+}
+
+.stamp {
+    border-radius: 50px 0px 5px 30px;
+}
+
+.footer {
+    display: flex;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #e9ecef;
+    transition: 1s;
 }
