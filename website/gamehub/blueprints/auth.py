@@ -13,9 +13,9 @@ from flask import (
     redirect,
     request,
     session,
-    url_for,
 )
 from flask.typing import ResponseValue
+from werkzeug.exceptions import BadRequest, Forbidden, Unauthorized
 
 from website.gamehub.controllers.rooms import get_room
 from website.gamehub.model.room import Room
@@ -26,7 +26,6 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 P = ParamSpec('P')
 T = TypeVar('T')
-
 
 # IMPORTANT! Called for every request
 @bp.before_app_request
@@ -69,10 +68,12 @@ def login_required(
     def login_view(*args: P.args, **kwargs: P.kwargs) -> ResponseValue:
         try:
             user = User(session['user']['username'], user_id=session['user']['user_id'])
+            current_app.logger.debug('LOGIN - OK')
             return view(user, *args, **kwargs)
-        except KeyError:
+        except KeyError as e:
+            current_app.logger.debug('LOGIN - KEY ERROR')
             flash('miss_username')
-            return redirect(url_for('bl_lobby.lobby'), 302)
+            raise Unauthorized from e
 
     return login_view
 
@@ -80,21 +81,25 @@ def login_required(
 def room_access(
     view: Callable[Concatenate[User, Room, P], ResponseValue],
 ) -> Callable[P, ResponseValue]:
-    @login_required
     @wraps(view)
+    @login_required
     def access_view(user: User, *args: P.args, **kwargs: P.kwargs) -> ResponseValue:
+        current_app.logger.debug('ROOM ACCESS: %s', view)
         try:
             room = get_room(session['room'])
             if room:
                 r_user = room.members[(user.user_id, user.username)]
+                current_app.logger.debug('ROOM ACCESS - OK')
                 return view(r_user, room, *args, **kwargs)
-        except KeyError:
+        except KeyError as e:
+            current_app.logger.debug('ROOM ACCESS - KEY ERROR')
             flash('miss_room')
-            return redirect(url_for('bl_lobby.lobby'), 302)
-        return abort(404)
+            raise Forbidden from e
+
+        current_app.logger.debug('ROOM ACCESS - ABORT')
+        raise BadRequest
 
     return access_view
-
 
 def in_game(
     room_controller: type[T],
@@ -107,9 +112,11 @@ def in_game(
         def access_view(user: User, room: Room, *args: P.args, **kwargs: P.kwargs) -> ResponseValue:
             controller = room.controller
             if isinstance(controller, room_controller):
+                current_app.logger.debug('IN GAME - OK')
                 return view(user, room, controller, *args, **kwargs)
-            flash('miss_room')
-            return redirect(url_for('bl_lobby.lobby'), 302)
+            current_app.logger.debug('IN GAME - INVALID')
+            flash('invalid_room')
+            raise BadRequest
 
         return access_view
 
@@ -118,13 +125,17 @@ def in_game(
 
 @bp.route('/login', methods=('POST',))
 def login() -> ResponseValue:
-    username = request.get_json().get('username')
-    if validate_username(username):
-        user = session.get('user', User(username))
-        user['username'] = username
-        session['user'] = user
-        return Response(status=200)
-    return Response(status=401)
+    try:
+        username = request.get_json().get('username')
+        if validate_username(username):
+            user = session.get('user', User(username))
+            user['username'] = username
+            session['user'] = user
+            return Response(status=200)
+        return Response(status=401)
+    except KeyError:
+        return abort(400)
+
 
 
 @bp.route('/ajcookiepolicy/', methods=('GET', 'POST'))

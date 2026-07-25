@@ -43,3 +43,8 @@ def get_room(room_id: str) -> Room | None:
 
 def get_all_rooms() -> dict[str, Room]:
     return db.rooms
+
+def unready_room(room: Room) -> bool:
+    for k in room.members:
+        room.members[k].is_ready = False
+    return update_room(room)

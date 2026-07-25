@@ -1,8 +1,11 @@
+from typing import Any
+
 from flask import Response, session
 from flask_socketio import emit, join_room, leave_room
+from werkzeug.exceptions import BadRequest
 
 from website.gamehub.blueprints.auth import room_access
-from website.gamehub.controllers.rooms import delete_room, update_room
+from website.gamehub.controllers.rooms import delete_room, unready_room, update_room
 from website.gamehub.extensions import socketio
 from website.gamehub.model.room import Room
 from website.gamehub.model.user import User
@@ -20,7 +23,8 @@ def handle_ready(user: User, room: Room, sid: str) -> Response:
             room.init_controller()
             emit('refresh_members', room.get_members(), to=room.room_id)
             emit('next_round', to=room.room_id)
-    return Response(status=200)
+        return Response(status=200)
+    raise BadRequest
 
 
 @socketio.on('connect')
@@ -38,7 +42,7 @@ def handle_connect(user: User, room: Room) -> Response:
 
 @socketio.on('disconnect')
 @room_access
-def handle_disconnect(user: User, room: Room) -> Response:
+def handle_disconnect(user: User, room: Room, _: Any) -> Response:
     room['members'].pop((user.user_id, user.username))
     session.pop('room')
     data = {
@@ -54,13 +58,3 @@ def handle_disconnect(user: User, room: Room) -> Response:
         else update_room(room)
     )
     return Response(status=200)
-
-
-def get_members(room: Room) -> list[User]:
-    return list(room.members.values())
-
-
-def unready_room(room: Room) -> bool:
-    for k in room.members:
-        room.members[k].is_ready = False
-    return update_room(room)

@@ -25,6 +25,7 @@ def display_error(err_num: Literal[1, 2, 9]) -> str:
 msg_dict = {
     'miss_username': 'Please enter your username',
     'miss_room': 'Please join a room',
+    'invalid_room': 'Your room session is invalid - please join once again',
 }
 
 

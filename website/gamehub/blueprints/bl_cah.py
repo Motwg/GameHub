@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 from flask import Response
 from flask_socketio import emit
 
-from website.gamehub.blueprints.bl_activity import get_members
 from website.gamehub.extensions import socketio
 from website.gamehub.model.room import Room
 from website.gamehub.model.room_controllers import CahController
@@ -42,7 +41,7 @@ def handle_confirm_cards(
         confirmed_cards = [
             [controller.cards[m][idx] for idx in controller.confirmed_cards.get(m, [])]
             for m in controller.queue
-            if m != controller.cah_master
+            if m != controller.cah_master # to uncomment
         ]
 
         if all(len(c) == controller.gaps for c in confirmed_cards):

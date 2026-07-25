@@ -45,6 +45,7 @@ def lobby() -> str:
 @bp.route('/room/<string:room_id>', methods=('GET',))
 @login_required
 def join_room(user: User, room_id: str) -> ResponseValue:
+    current_app.logger.debug('LOBBY - JOIN ROOM')
     room = get_room(room_id)
     if room is None:
         return abort(404)
@@ -57,6 +58,7 @@ def join_room(user: User, room_id: str) -> ResponseValue:
         return abort(404)
     session['room'] = room_id
     mc: dict[str, str] = set_menu(f'room {room_id}')
+    current_app.logger.debug('JOIN SESSION: %s', session)
     return render_template(f'activities/{room.activity}.html', mc=mc, room=room)
 
 
@@ -64,6 +66,7 @@ def join_room(user: User, room_id: str) -> ResponseValue:
 @login_required
 def create_room(user: User) -> ResponseValue:
     if request.method == 'POST':
+        current_app.logger.debug('CREATE ROOM - POST')
         data = request.get_json()
         room = Room(
             data.get('activity', 'chat'),
@@ -74,9 +77,10 @@ def create_room(user: User) -> ResponseValue:
             session['room'] = room.room_id
             return Response(status=201)
     elif request.method == 'GET':
+        current_app.logger.debug('CREATE ROOM - GET')
         if session.get('room'):
-            return redirect(url_for('bl_lobby.join_room', room_id=session['room']), 302)
-        return redirect(url_for('bl_lobby.lobby'), 302)
+            return redirect(url_for('bl_lobby.join_room', room_id=session['room']))
+        return redirect(url_for('bl_lobby.lobby'))
     return abort(404)
 
 
