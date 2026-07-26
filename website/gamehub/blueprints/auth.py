@@ -17,7 +17,7 @@ from flask import (
 from flask.typing import ResponseValue
 from werkzeug.exceptions import BadRequest, Forbidden, Unauthorized
 
-from website.gamehub.controllers.rooms import get_room
+from website.gamehub.controllers.rooms import get_room, join_room
 from website.gamehub.model.room import Room
 from website.gamehub.model.user import User
 from website.gamehub.validators.auth import validate_username
@@ -122,6 +122,26 @@ def in_game(
 
     return inner
 
+
+def room_connect(
+    view: Callable[Concatenate[User, Room, P], ResponseValue],
+) -> Callable[P, ResponseValue]:
+    @wraps(view)
+    @login_required
+    def access_view(user: User, *args: P.args, **kwargs: P.kwargs) -> ResponseValue:
+        current_app.logger.debug('ROOM CONNECT: %s', view)
+        try:
+            room = get_room(session['room'])
+            if room and join_room(room, user):
+                current_app.logger.debug('ROOM CONNECT - OK')
+                return view(user, room, *args, **kwargs)
+        except KeyError as e:
+            current_app.logger.debug('ROOM CONNECT - KEY ERROR')
+            flash('miss_room')
+            raise Forbidden from e
+        current_app.logger.debug('ROOM CONNECT - ABORT')
+        raise BadRequest
+    return access_view
 
 @bp.route('/login', methods=('POST',))
 def login() -> ResponseValue:

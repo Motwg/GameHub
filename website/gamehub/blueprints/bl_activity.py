@@ -1,10 +1,10 @@
 from typing import Any
 
-from flask import Response, session
+from flask import Response
 from flask_socketio import emit, join_room, leave_room
 from werkzeug.exceptions import BadRequest
 
-from website.gamehub.blueprints.auth import room_access
+from website.gamehub.blueprints.auth import room_access, room_connect
 from website.gamehub.controllers.rooms import delete_room, unready_room, update_room
 from website.gamehub.extensions import socketio
 from website.gamehub.model.room import Room
@@ -28,7 +28,7 @@ def handle_ready(user: User, room: Room, sid: str) -> Response:
 
 
 @socketio.on('connect')
-@room_access
+@room_connect
 def handle_connect(user: User, room: Room) -> Response:
     join_room(room.room_id)
     data = {
@@ -44,7 +44,6 @@ def handle_connect(user: User, room: Room) -> Response:
 @room_access
 def handle_disconnect(user: User, room: Room, _: Any) -> Response:
     room['members'].pop((user.user_id, user.username))
-    session.pop('room')
     data = {
         'username': user.username,
         'members': room.get_members(),

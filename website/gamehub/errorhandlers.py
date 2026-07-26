@@ -1,4 +1,4 @@
-from flask import Response, current_app, g, render_template, request
+from flask import Response, current_app, g, render_template
 
 from website.gamehub.extensions import socketio
 
@@ -7,7 +7,6 @@ from website.gamehub.extensions import socketio
 def error_handler(e: BaseException) -> bool:
     current_app.logger.debug('Exception: %s', e)
     current_app.logger.debug('Exception args: %s', e.args)
-    current_app.logger.debug(request.event["message"])
     return False
 
 def error_404(_: BaseException) -> Response:

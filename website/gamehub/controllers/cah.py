@@ -22,7 +22,7 @@ def get_lang_pack(lang: str) -> dict[str, pd.Series]:
 
 
 def get_card_generator(
-    language: str,
+    language: Literal['EN', 'PL'],
     b_or_w: Literal['black', 'white'],
 ) -> dict[str, Iterator[str]]:
     lang_pack = lang_packs[language][b_or_w]

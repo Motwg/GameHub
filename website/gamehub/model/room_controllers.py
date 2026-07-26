@@ -38,7 +38,7 @@ class CahController(RoomController):
         self.cah_master = self.queue.popleft()
         self.queue.append(self.cah_master)
 
-    def _give_cards(self, limit: int = 7) -> None:
+    def _give_cards(self, limit: int = 10) -> None:
         generator = self.white
         for m in self.queue:
             while len(self.cards.setdefault(m, [])) < limit:
@@ -60,3 +60,4 @@ class CahController(RoomController):
 
     def end_round(self, cards_to_remove: dict[UserId, list[str]]) -> None:
         self._remove_cards(cards_to_remove)
+        self.confirmed_cards = {}

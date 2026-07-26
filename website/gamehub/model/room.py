@@ -21,6 +21,7 @@ LiteralActivities = Literal['cah', 'chat']
 
 @dataclass(slots=True)
 class Room:
+    name: str
     activity: LiteralActivities
     password: str | None = None
     members: OrderedDict[tuple[uuid.UUID, str], User] = field(default_factory=OrderedDict)

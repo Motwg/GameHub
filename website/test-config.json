@@ -3,6 +3,8 @@
   "SERVER_NAME": "127.0.0.1:5000",
   "DEBUG": true,
 
+  "SESSION_TYPE": "filesystem",
+
   "DB_HOST": "localhost",
   "DB_USER": "user",
   "DB_PASSWORD": "password",

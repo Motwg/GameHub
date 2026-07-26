@@ -16,7 +16,7 @@ from flask.typing import ResponseValue
 
 from website.gamehub.blueprints.auth import login_required, manage_cookie_policy
 from website.gamehub.controllers.activities import get_activity
-from website.gamehub.controllers.rooms import add_room, get_all_rooms, get_room, update_room
+from website.gamehub.controllers.rooms import add_room, get_all_rooms, get_room
 from website.gamehub.model.room import Room
 from website.gamehub.model.user import User
 from website.gamehub.utils import set_menu
@@ -33,6 +33,7 @@ def lobby() -> str:
         rooms=[
             {
                 'room_id': k,
+                'name': r.name,
                 'activity': get_activity(r.activity),
                 'members': map(str, r.members.keys()),
                 'password': bool(r.password),
@@ -44,17 +45,13 @@ def lobby() -> str:
 
 @bp.route('/room/<string:room_id>', methods=('GET',))
 @login_required
-def join_room(user: User, room_id: str) -> ResponseValue:
+def join_room(_: User, room_id: str) -> ResponseValue:
     current_app.logger.debug('LOBBY - JOIN ROOM')
     room = get_room(room_id)
     if room is None:
         return abort(404)
     if room.password:
         # TODO: Add handling room psswd
-        return abort(404)
-    room.members[(user.user_id, user.username)] = user
-    if not update_room(room):
-        _ = room.members.pop((user.user_id, user.username))
         return abort(404)
     session['room'] = room_id
     mc: dict[str, str] = set_menu(f'room {room_id}')
@@ -69,6 +66,7 @@ def create_room(user: User) -> ResponseValue:
         current_app.logger.debug('CREATE ROOM - POST')
         data = request.get_json()
         room = Room(
+            data.get('name', 'Room'),
             data.get('activity', 'chat'),
             data.get('password', None),
             members=OrderedDict({(user.user_id, user.username): user}),
