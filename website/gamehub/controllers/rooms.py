@@ -2,6 +2,7 @@ import dataclasses
 
 from website.gamehub.db import db
 from website.gamehub.model.room import Room
+from website.gamehub.model.user import User
 
 
 def add_room(room: Room) -> bool:
@@ -43,3 +44,15 @@ def get_room(room_id: str) -> Room | None:
 
 def get_all_rooms() -> dict[str, Room]:
     return db.rooms
+
+def unready_room(room: Room) -> bool:
+    for k in room.members:
+        room.members[k].is_ready = False
+    return update_room(room)
+
+def join_room(room: Room, user: User) -> bool:
+    room.members[(user.user_id, user.username)] = user
+    if not update_room(room):
+        _ = room.members.pop((user.user_id, user.username))
+        return False
+    return True

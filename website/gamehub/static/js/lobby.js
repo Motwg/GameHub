@@ -23,6 +23,7 @@ let openModalCreateActivity = () => {
 
 let createActivity = () => {
   const params = {
+    name: document.getElementById("roomName").value,
     activity: document.getElementById("selectActivity").value,
     password: document.getElementById("password").value,
   };

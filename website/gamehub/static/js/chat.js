@@ -7,7 +7,6 @@ $(document).ready(() => {
 
   const memberList = $("#members");
   const addMember = (m) => {
-    console.log(m);
     const li = document.createElement("li");
     const span = document.createElement("span");
     li.innerHTML = m.username;
@@ -27,6 +26,16 @@ $(document).ready(() => {
       addMember(member);
     });
   };
+
+  const openNav = () => {
+    document.getElementById("sidebar").style.width = "370px";
+    document.getElementById("main").style.marginRight = "370px";
+  }
+
+  const closeNav = () => {
+    document.getElementById("sidebar").style.width = "0px";
+    document.getElementById("main").style.marginRight = "0px";
+  }
 
   // socket.io
   socket.on("connect", () => {
@@ -51,8 +60,26 @@ $(document).ready(() => {
     refreshMembers(members);
   });
 
-  $("#sendMsgButton").on("click", () => {
+  // hooks
+  $("#sendMsgButton").click(() => {
     socket.send($("#message").val());
     $("#message").val("");
+  });
+
+  $("#message").keydown((event) => {
+    if ((event.keyCode || event.which) == 13) {
+      $("#sendMsgButton").click();
+    }
+  });
+
+  let sidebarActive = true;
+  $("#toggleSidebarBtn").click(() => {
+    if (sidebarActive) {
+      sidebarActive = false;
+      closeNav();
+    } else {
+      sidebarActive = true;
+      openNav();
+    }
   });
 });

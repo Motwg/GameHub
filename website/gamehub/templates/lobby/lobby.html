@@ -6,6 +6,7 @@
     const roomUrl = "{{ url_for('bl_lobby.create_room') }}";
 </script>
 {% endblock %} {% block contents %}
+<div class="container">
 <div>
     <ol class="breadcrumb small">
         <li class="breadcrumb-item active" aria-current="page">Lobby</li>
@@ -45,16 +46,18 @@
         <thead>
             <tr>
                 <th scope="col">#</th>
+                <th scope="col">Name</th>
                 <th scope="col">Game</th>
                 <th scope="col">Password</th>
                 <th scope="col">Players</th>
-                <th scope="col">Join</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
             {% for room in rooms %}
             <tr>
                 <th scope="row">{{ loop.index }}</th>
+                <td>{{ room['name'] }}</td>
                 <td>{{ room['activity'] }}</td>
                 <td>{{ room['password'] }}</td>
                 <td>{{ ' '.join(room['members']) }}</td>
@@ -64,17 +67,15 @@
                     >
                         {% if loop.index % 2 %}
                         <input
-                            class="btn btn-secondary"
+                            class="btn btn-secondary btn-join"
                             type="submit"
                             value="Join"
-                            style="width: 50%; transform: translate(50%, 0%)"
                         />
                         {% else %}
                         <input
-                            class="btn btn-primary"
+                            class="btn btn-primary btn-join"
                             type="submit"
                             value="Join"
-                            style="width: 50%; transform: translate(50%, 0%)"
                         />
                         {% endif %}
                     </form>
@@ -84,7 +85,7 @@
         </tbody>
     </table>
 </div>
-
+</div>
 {% include "lobby/create-activity.html" %}
 <script src="{{url_for('static',filename='js/lobby.js')}}"></script>
 {% endblock %}

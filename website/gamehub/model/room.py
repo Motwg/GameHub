@@ -21,8 +21,9 @@ LiteralActivities = Literal['cah', 'chat']
 
 @dataclass(slots=True)
 class Room:
+    name: str
     activity: LiteralActivities
-    password: None | str = None
+    password: str | None = None
     members: OrderedDict[tuple[uuid.UUID, str], User] = field(default_factory=OrderedDict)
     room_id: str = field(default_factory=id_generator, kw_only=True)
     is_dedicated: bool = field(default=False, kw_only=True)
@@ -37,7 +38,10 @@ class Room:
     def new_id(self) -> None:
         self.room_id = id_generator()
 
-    def init_controller(self, *args, **kwargs) -> None:
+    def get_members(self) -> list[User]:
+        return list(self.members.values())
+
+    def init_controller(self) -> None:
         match self.activity:
             case 'chat':
                 self.controller = ChatController()

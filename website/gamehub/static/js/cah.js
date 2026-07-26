@@ -127,14 +127,16 @@ $(document).ready(() => {
   const myCards = document.querySelector("card-container");
   const carousel = document.querySelector("card-carousel");
 
-  $("#confirmButton").prop("disabled", true);
-  $("#confirmButton").hide();
+  $("#confirmCards").prop("disabled", true);
+  $("#confirmCards").hide();
+  $("#confirmWinner").prop("disabled", true);
+  $("#confirmWinner").hide();
 
   $("#readyButton").on("click", () => {
     socket.emit("ready", socket.id);
   });
 
-  $("#confirmButton").on("click", () => {
+  $("#confirmCards").on("click", () => {
     if (myCards.checked.length == blackCardContainer.firstChild.gaps) {
       myCards.dimConfirm();
       socket.emit("confirm_cards", myCards.checked);
@@ -148,13 +150,13 @@ $(document).ready(() => {
   socket.on("acc_ready", () => {
     $("#readyButton").prop("disabled", true);
     $("#readyButton").hide();
-    $("#confirmButton").show();
+    $("#confirmCards").show();
   });
 
   socket.on("game_stop", () => {
     $("#readyButton").prop("disabled", false);
     $("#readyButton").show();
-    $("#confirmButton").prop("disabled", true);
+    $("#confirmCards").prop("disabled", true);
   });
 
   const blackCardContainer = document.querySelector("#black-card");
@@ -165,16 +167,21 @@ $(document).ready(() => {
   });
 
   socket.on("send_turn_data", (data) => {
+    console.log("Got data: ", data)
     blackCardContainer.appendChild(new BlackCard(data.black_card, data.gaps));
     myCards.changeCards(data.cards, data.gaps);
 
-    // TODO: delete mark
-    if (!data.is_my_turn) {
-      $("#confirmButton").prop("disabled", true);
-      // $("#confirmButton").hide();
+    if (data.master) {
+      $("#confirmCards").prop("disabled", true);
+      $("#confirmCards").hide();
+      $("#confirmWinner").prop("disabled", false);
+      $("#confirmWinner").show();
       myCards.dimMaster();
     } else {
-      $("#confirmButton").prop("disabled", false);
+      $("#confirmCards").prop("disabled", false);
+      $("#confirmCards").show();
+      $("#confirmWinner").prop("disabled", true);
+      $("#confirmWinner").hide();
     }
   });
 

@@ -1,6 +1,7 @@
 import json
+from pathlib import Path
 
-with open('website/prod-config.json') as json_file:
+with Path('website/prod-config.json').open() as json_file:
     data = json.load(json_file)
 
 workers = int(data.get('GUNICORN_PROCESSES', '1'))
