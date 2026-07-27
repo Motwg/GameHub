@@ -47,12 +47,12 @@ $(document).ready(() => {
   });
 
   socket.on("new_connection", (data) => {
-    sendMessage(data.username + " joined room!");
+    sendMessage(data.username + " joined the room!");
     refreshMembers(data.members);
   });
 
   socket.on("lost_connection", (data) => {
-    sendMessage(data.username + " left room!");
+    sendMessage(data.username + " left the room!");
     refreshMembers(data.members);
   });
 
