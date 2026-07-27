@@ -15,7 +15,7 @@ $(document).ready(() => {
       "list-group-item d-flex justify-content-between align-items-center",
     );
     span.innerHTML = m.is_ready ? "&#10004   " + m.points : m.points;
-    span.setAttribute("class", "badge badge-primary");
+    span.setAttribute("class", "badge badge-primary badge-13");
     li.appendChild(span);
     memberList.append(li);
   };

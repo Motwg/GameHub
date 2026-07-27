@@ -7,7 +7,12 @@ from string import ascii_uppercase
 from typing import Any, Literal
 
 from website.gamehub.controllers.cah import get_card_generator
-from website.gamehub.model.room_controllers import CahController, ChatController, RoomController
+from website.gamehub.model.room_controllers import (
+    CahController,
+    ChatController,
+    RoomController,
+    UserId,
+)
 from website.gamehub.model.user import User
 
 
@@ -24,7 +29,7 @@ class Room:
     name: str
     activity: LiteralActivities
     password: str | None = None
-    members: OrderedDict[tuple[uuid.UUID, str], User] = field(default_factory=OrderedDict)
+    members: OrderedDict[UserId, User] = field(default_factory=OrderedDict)
     room_id: str = field(default_factory=id_generator, kw_only=True)
     is_dedicated: bool = field(default=False, kw_only=True)
     controller: RoomController | None = field(init=False, default=None)
