@@ -9,10 +9,10 @@
     display: block;
 
     font-size: 14px;
-    width: 125px;
+    width: 126px;
     height: 190px;
     padding: 8px;
-    margin: 7px;
+    margin: 6px 12px 12px 6px;
 }
 
 .upper-row .cah-card {
@@ -81,6 +81,7 @@ label:has(white-card.checked) {
 }
 
 label:has(white-card):hover {
+    z-index: 1;
     transform: scale(1.5);
 }
 
@@ -90,13 +91,15 @@ label:has(white-card.checked)::before {
     transform: scale(1);
 }
 
+.dimmed,
 .dimmed-confirm,
 .dimmed-master {
     position: relative;
 }
 
+.dimmed:before,
+.dimmed-confirm:before,
 .dimmed-master:before {
-    content: "You are the master now!";
     font-weight: bold;
     font-size: 15pt;
     color: #fff;
@@ -111,18 +114,10 @@ label:has(white-card.checked)::before {
     background: rgba(0, 0, 0, 0.5);
 }
 
+.dimmed-master:before {
+    content: "You are the master now!";
+}
+
 .dimmed-confirm:before {
     content: "Your cards are confirmed!";
-    font-weight: bold;
-    font-size: 15pt;
-    color: #fff;
-    justify-content: center;
-    align-items: center;
-
-    z-index: 10;
-    display: flex;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.5);
 }
