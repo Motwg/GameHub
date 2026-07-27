@@ -45,6 +45,13 @@ class CardContainer extends HTMLElement {
     });
   }
 
+  uncheckLabels() {
+    this.checked.length = 0;
+    this.childNodes.forEach((label) => {
+      label.firstChild.classList.remove("checked");
+    });
+  }
+
   changeCards(cards, limit) {
     this.textContent = "";
     this.checked.length = 0;
@@ -59,6 +66,9 @@ class CardContainer extends HTMLElement {
           t.classList.remove("checked");
           this.checked.splice(this.checked.indexOf(ind), 1);
         } else {
+          if (limit === 1) {
+            this.uncheckLabels();
+          }
           if (this.checked.length < limit) {
             t.classList.add("checked");
             this.checked.push(ind);
